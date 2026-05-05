@@ -25,9 +25,14 @@ class WaterQualityDeviceController extends GetxController {
   var comId = 19.obs;
 
   Timer? _pollTimer;
+  Timer? _aeratorPollTimer;
   var isFetching = false.obs;
   var commandInProgress = false.obs;
   bool _firstFetch = true;
+
+  var aeratorIds = <int>[].obs;
+
+  static const String _cacheAeratorKey = 'morefish_aerator_cache';
 
   static const String _cachePondListKey = 'morefish_pond_list_cache';
   static const String _cachePondDataKey = 'morefish_pond_data_cache';
@@ -44,11 +49,13 @@ class WaterQualityDeviceController extends GetxController {
     pondList();
     CompanyList();
     _startPolling();
+    _startAeratorPolling();
   }
 
   @override
   void onClose() {
     _pollTimer?.cancel();
+    _aeratorPollTimer?.cancel();
     super.onClose();
   }
 
@@ -61,6 +68,46 @@ class WaterQualityDeviceController extends GetxController {
       debugPrint('[poll] Polling pond data for id: ${selectedAstId.value}');
       pondData(id: selectedAstId.value);
     });
+  }
+
+  void _startAeratorPolling() {
+    debugPrint('[WaterQuality] Aerator polling started (every 2 seconds)');
+    _aeratorPollTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      // Conditions: we have a selected asset and we have known aerator ids
+      if (selectedAstId.value == 0) return;
+      if (aeratorIds.isEmpty) return; // don't change UI shape after first fetch
+      _pollAeratorState();
+    });
+  }
+
+  void _pollAeratorState() async {
+    try {
+      // lightweight: fetch pond data but only update isRunning flags
+      var response = await devicesRepository.getPondData(
+        id: selectedAstId.value,
+      );
+      response.fold(
+        (l) {
+          // ignore errors for polling
+        },
+        (r) {
+          try {
+            final aerators = r.data.devices[0].aerators;
+            for (int i = 0; i < aerators.length; i++) {
+              final pk = aerators[i].aeratorPk;
+              final idx = aeratorIds.indexOf(pk);
+              if (idx >= 0) {
+                // update existing switch state only
+                aeratorSwitch[idx] = aerators[i].isRunning;
+              } else {
+                // new aerator discovered after first fetch: cache but do not add to UI
+                _cacheSingleAerator(pk, aerators[i].isRunning);
+              }
+            }
+          } catch (_) {}
+        },
+      );
+    } catch (_) {}
   }
 
   pondList() async {
@@ -101,10 +148,29 @@ class WaterQualityDeviceController extends GetxController {
         _cachePondData(r);
 
         // Reset and populate aerator switches from fresh API data
-        aeratorSwitch.clear();
         final aerators = r.data.devices[0].aerators;
-        for (int i = 0; i < aerators.length; i++) {
-          aeratorSwitch.add(aerators[i].isRunning);
+        if (_firstFetch) {
+          aeratorIds.clear();
+          aeratorSwitch.clear();
+          for (int i = 0; i < aerators.length; i++) {
+            aeratorIds.add(aerators[i].aeratorPk);
+            aeratorSwitch.add(aerators[i].isRunning);
+          }
+          // Cache discovered aerators so we remember them between app launches
+          _cacheAeratorListFromData(aerators);
+        } else {
+          // After initial load we DO NOT change the number of switches in the UI.
+          // Only update the `is_running` state for known aerators. New aerators
+          // are cached but not added to the UI to avoid layout shifts.
+          for (int i = 0; i < aerators.length; i++) {
+            final pk = aerators[i].aeratorPk;
+            final idx = aeratorIds.indexOf(pk);
+            if (idx >= 0) {
+              aeratorSwitch[idx] = aerators[i].isRunning;
+            } else {
+              _cacheSingleAerator(pk, aerators[i].isRunning);
+            }
+          }
         }
 
         // Fetch sensor list for graph
@@ -205,6 +271,24 @@ class WaterQualityDeviceController extends GetxController {
       if (cachedAstName != null && cachedAstName.isNotEmpty) {
         selectedAstName.value = cachedAstName;
       }
+
+      // Load cached aerator states (if any). This populates the local arrays so
+      // the UI can show cached switch states before the first full fetch.
+      final cachedAerator = prefs.getString(_cacheAeratorKey);
+      if (cachedAerator != null && cachedAerator.isNotEmpty) {
+        try {
+          final Map<String, dynamic> m = jsonDecode(cachedAerator);
+          aeratorIds.clear();
+          aeratorSwitch.clear();
+          m.forEach((k, v) {
+            final pk = int.tryParse(k) ?? 0;
+            if (pk != 0) {
+              aeratorIds.add(pk);
+              aeratorSwitch.add(v == true);
+            }
+          });
+        } catch (_) {}
+      }
     } catch (_) {}
   }
 
@@ -222,6 +306,35 @@ class WaterQualityDeviceController extends GetxController {
   Future<void> _cacheSensorList(SensorListResponse response) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_cacheSensorListKey, response.toRawJson());
+  }
+
+  Future<void> _cacheAeratorListFromData(List aerators) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final Map<String, dynamic> m = {};
+      for (final a in aerators) {
+        try {
+          final pk = a.aeratorPk;
+          m[pk.toString()] = a.isRunning;
+        } catch (_) {}
+      }
+      await prefs.setString(_cacheAeratorKey, jsonEncode(m));
+    } catch (_) {}
+  }
+
+  Future<void> _cacheSingleAerator(int pk, bool isRunning) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final existing = prefs.getString(_cacheAeratorKey);
+      Map<String, dynamic> m = {};
+      if (existing != null && existing.isNotEmpty) {
+        try {
+          m = Map<String, dynamic>.from(jsonDecode(existing));
+        } catch (_) {}
+      }
+      m[pk.toString()] = isRunning;
+      await prefs.setString(_cacheAeratorKey, jsonEncode(m));
+    } catch (_) {}
   }
 
   Future<void> _cacheCompanyList(CompanyListResponse response) async {

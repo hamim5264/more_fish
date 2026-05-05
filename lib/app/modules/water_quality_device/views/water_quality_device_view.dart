@@ -994,6 +994,7 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
           },
           child: Column(
             children: [
+              const SizedBox(height: 20),
               Obx(() {
                 return CommonAppBar(
                   title: 'title'.tr,
@@ -1474,16 +1475,22 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                         height: 18,
                                                         decoration: BoxDecoration(
                                                           color: isOnline
-                                                              ? const Color(0xff2fbf71)
-                                                              : const Color(0xffe74c3c),
-                                                          shape: BoxShape.circle,
+                                                              ? const Color(
+                                                                  0xff2fbf71,
+                                                                )
+                                                              : const Color(
+                                                                  0xffe74c3c,
+                                                                ),
+                                                          shape:
+                                                              BoxShape.circle,
                                                         ),
                                                       ),
                                                       const SizedBox(width: 12),
                                                       SizedBox(
-                                                        width: MediaQuery.of(context)
-                                                                .size
-                                                                .width -
+                                                        width:
+                                                            MediaQuery.of(
+                                                              context,
+                                                            ).size.width -
                                                             220,
                                                         child: CommonText(
                                                           aerator.aeratorName,
