@@ -123,7 +123,10 @@ class ProfileView extends GetView<ProfileController> {
                                     child: InkWell(
                                       onTap: () async {
                                         await controller.loginTokenStorage
-                                            .removeAllTokens();
+                                            .removeToken();
+                                        await controller.loginTokenStorage
+                                            .removeUserId();
+                                        controller.isLoggedIn.value = '';
                                         Get.offAllNamed(Routes.INDEX);
                                       },
                                       child: const CommonContainer(
