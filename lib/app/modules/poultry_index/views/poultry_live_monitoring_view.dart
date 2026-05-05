@@ -21,38 +21,36 @@ class PoultryLiveMonitoringView extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: const Color(0xffebffff),
-          body: Column(
-            children: [
-              Obx(
-                () => CommonAppBar(
-                  title: 'Poultry Care',
-                  cityName: 'Dhaka',
-                  date: header.formattedDate.value,
-                  time: header.formattedTime.value,
-                  temp: header.tempText.value,
-                  humidity: header.humidityText.value,
-                  logoAssetPath: 'assets/icons/dma_poultry_pulse.png',
-                  backgroundColor: const Color(0xffdbcc68),
-                ),
+      child: Scaffold(
+        backgroundColor: const Color(0xffebffff),
+        body: Column(
+          children: [
+            Obx(
+              () => CommonAppBar(
+                title: 'Poultry Care',
+                cityName: 'Dhaka',
+                date: header.formattedDate.value,
+                time: header.formattedTime.value,
+                temp: header.tempText.value,
+                humidity: header.humidityText.value,
+                logoAssetPath: 'assets/icons/dma_poultry_pulse.png',
+                backgroundColor: const Color(0xffdbcc68),
               ),
-              Expanded(
-                // Poultry Pulse live monitoring UI is visible even when a device isn't connected yet.
-                // (No login-gating for now; backend/device integration will be added later.)
-                child: Builder(
-                  builder: (_) {
-                    final ctrl = Get.put(PoultryLiveMonitoringController());
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ctrl.refreshWhenPageVisible();
-                    });
-                    return _LoggedInDashboard(controller: ctrl);
-                  },
-                ),
+            ),
+            Expanded(
+              // Poultry Pulse live monitoring UI is visible even when a device isn't connected yet.
+              // (No login-gating for now; backend/device integration will be added later.)
+              child: Builder(
+                builder: (_) {
+                  final ctrl = Get.put(PoultryLiveMonitoringController());
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ctrl.refreshWhenPageVisible();
+                  });
+                  return _LoggedInDashboard(controller: ctrl);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

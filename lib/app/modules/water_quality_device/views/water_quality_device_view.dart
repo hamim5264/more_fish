@@ -968,818 +968,789 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.grey.shade200,
-          body: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapDown: (details) {
-              final box = context.findRenderObject() as RenderBox?;
-              final localPosition = box?.globalToLocal(details.globalPosition);
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (details) {
+            final box = context.findRenderObject() as RenderBox?;
+            final localPosition = box?.globalToLocal(details.globalPosition);
 
-              if (localPosition != null &&
-                  localPosition.dy > MediaQuery.of(context).size.height * 0.4) {
-                return;
-              }
+            if (localPosition != null &&
+                localPosition.dy > MediaQuery.of(context).size.height * 0.4) {
+              return;
+            }
 
-              if (controller.commandInProgress.value) {
-                controller.commandInProgress.value = false;
-                debugPrint('[ui] User dismissed loading via tap');
-                return;
-              }
+            if (controller.commandInProgress.value) {
+              controller.commandInProgress.value = false;
+              debugPrint('[ui] User dismissed loading via tap');
+              return;
+            }
 
-              controller.pondDataResponse.value = null;
-              controller.pondList();
-              controller.sensorList();
-              controller.CompanyList();
-            },
-            child: Column(
-              children: [
-                Obx(() {
-                  return CommonAppBar(
-                    title: 'title'.tr,
-                    cityName: "dhaka".tr,
-                    date: '${homeController.formattedDate}',
-                    time: '${homeController.formattedTime}',
-                    temp: '${homeController.weatherData['main']['temp']}°C',
-                    humidity:
-                        '${homeController.weatherData['main']['humidity']}%',
-                  );
-                }),
-                Expanded(
-                  child: Obx(() {
-                    var data = controller.pondDataResponse.value;
-                    return data == null
-                        ? const Center(child: Text('Waiting for live data...'))
-                        : Column(
-                            children: [
-                              Center(
-                                child: Obx(() {
-                                  final pondList =
-                                      controller.pondListResponse.value?.data ??
-                                      [];
+            controller.pondDataResponse.value = null;
+            controller.pondList();
+            controller.sensorList();
+            controller.CompanyList();
+          },
+          child: Column(
+            children: [
+              Obx(() {
+                return CommonAppBar(
+                  title: 'title'.tr,
+                  cityName: "dhaka".tr,
+                  date: '${homeController.formattedDate}',
+                  time: '${homeController.formattedTime}',
+                  temp: '${homeController.weatherData['main']['temp']}°C',
+                  humidity:
+                      '${homeController.weatherData['main']['humidity']}%',
+                );
+              }),
+              Expanded(
+                child: Obx(() {
+                  var data = controller.pondDataResponse.value;
+                  return data == null
+                      ? const Center(child: Text('Waiting for live data...'))
+                      : Column(
+                          children: [
+                            Center(
+                              child: Obx(() {
+                                final pondList =
+                                    controller.pondListResponse.value?.data ??
+                                    [];
 
-                                  if (pondList.isEmpty) {
-                                    return const SizedBox();
-                                  }
+                                if (pondList.isEmpty) {
+                                  return const SizedBox();
+                                }
 
-                                  final astNameIdList = pondList
-                                      .map(
-                                        (pond) => {
-                                          'astName': pond.astName,
-                                          'id': pond.id,
-                                        },
-                                      )
-                                      .toList();
+                                final astNameIdList = pondList
+                                    .map(
+                                      (pond) => {
+                                        'astName': pond.astName,
+                                        'id': pond.id,
+                                      },
+                                    )
+                                    .toList();
 
-                                  final astNames = astNameIdList
-                                      .map((e) => e['astName'] as String)
-                                      .toList();
+                                final astNames = astNameIdList
+                                    .map((e) => e['astName'] as String)
+                                    .toList();
 
-                                  if (!astNames.contains(
-                                    controller.selectedAstName.value,
-                                  )) {
-                                    controller.selectedAstName.value =
-                                        astNames.first;
-                                  }
+                                if (!astNames.contains(
+                                  controller.selectedAstName.value,
+                                )) {
+                                  controller.selectedAstName.value =
+                                      astNames.first;
+                                }
 
-                                  return Column(
-                                    children: [
-                                      const SizedBox(height: 12),
-                                      Container(
-                                        margin: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        child: DropdownButtonHideUnderline(
-                                          child: DropdownButton2<String>(
-                                            isExpanded: true,
-                                            value: controller
-                                                .selectedAstName
-                                                .value,
-                                            onChanged: (String? newValue) {
-                                              if (newValue != null) {
-                                                final selectedItem =
-                                                    astNameIdList.firstWhere(
-                                                      (e) =>
-                                                          e['astName'] ==
-                                                          newValue,
-                                                    );
-                                                final selectedId =
-                                                    selectedItem['id'];
-                                                controller.selectAsset(
-                                                  name: newValue,
-                                                  id: selectedId as int,
-                                                );
-                                              }
-                                            },
-                                            items: astNames
-                                                .map<DropdownMenuItem<String>>((
-                                                  String value,
-                                                ) {
-                                                  return DropdownMenuItem<
-                                                    String
-                                                  >(
-                                                    value: value,
-                                                    child: CommonText(
-                                                      value,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                    ),
+                                return Column(
+                                  children: [
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton2<String>(
+                                          isExpanded: true,
+                                          value:
+                                              controller.selectedAstName.value,
+                                          onChanged: (String? newValue) {
+                                            if (newValue != null) {
+                                              final selectedItem = astNameIdList
+                                                  .firstWhere(
+                                                    (e) =>
+                                                        e['astName'] ==
+                                                        newValue,
                                                   );
-                                                })
-                                                .toList(),
-                                            buttonStyleData: ButtonStyleData(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 16,
+                                              final selectedId =
+                                                  selectedItem['id'];
+                                              controller.selectAsset(
+                                                name: newValue,
+                                                id: selectedId as int,
+                                              );
+                                            }
+                                          },
+                                          items: astNames
+                                              .map<DropdownMenuItem<String>>((
+                                                String value,
+                                              ) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: CommonText(
+                                                    value,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
                                                   ),
-                                              height: 60,
-                                              width: double.infinity,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
+                                                );
+                                              })
+                                              .toList(),
+                                          buttonStyleData: ButtonStyleData(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16,
                                             ),
-                                            dropdownStyleData:
-                                                DropdownStyleData(
-                                                  maxHeight: 300,
-                                                  direction: DropdownDirection
-                                                      .textDirection,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          10,
-                                                        ),
-                                                  ),
-                                                ),
-                                            iconStyleData: const IconStyleData(
-                                              icon: Icon(
-                                                Icons.arrow_drop_down,
-                                                size: 35,
-                                              ),
+                                            height: 60,
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          dropdownStyleData: DropdownStyleData(
+                                            maxHeight: 300,
+                                            direction:
+                                                DropdownDirection.textDirection,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          iconStyleData: const IconStyleData(
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
+                                              size: 35,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  );
-                                }),
-                              ),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 12,
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 12),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Expanded(
-                                                child: Row(
-                                                  children: [
-                                                    data
-                                                                .data
-                                                                .devices[0]
-                                                                .deviceStatus ==
-                                                            'Online'
-                                                        ? Container(
-                                                            height: 16,
-                                                            width: 16,
-                                                            decoration: BoxDecoration(
-                                                              color:
-                                                                  const Color(
-                                                                    0xff00cc00,
-                                                                  ),
-                                                              borderRadius:
-                                                                  BorderRadius.circular(
-                                                                    100,
-                                                                  ),
+                                  ],
+                                );
+                              }),
+                            ),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 12),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Row(
+                                                children: [
+                                                  data
+                                                              .data
+                                                              .devices[0]
+                                                              .deviceStatus ==
+                                                          'Online'
+                                                      ? Container(
+                                                          height: 16,
+                                                          width: 16,
+                                                          decoration: BoxDecoration(
+                                                            color: const Color(
+                                                              0xff00cc00,
                                                             ),
-                                                          )
-                                                        : Container(
-                                                            height: 18,
-                                                            width: 18,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                  color: Colors
-                                                                      .red,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        100,
-                                                                      ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  100,
                                                                 ),
                                                           ),
-                                                    const SizedBox(width: 6),
-                                                    Expanded(
-                                                      child: CommonText(
-                                                        data
-                                                            .data
-                                                            .devices[0]
-                                                            .deviceName,
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        color: const Color(
-                                                          0xff0370c3,
+                                                        )
+                                                      : Container(
+                                                          height: 18,
+                                                          width: 18,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.red,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  100,
+                                                                ),
+                                                          ),
                                                         ),
+                                                  const SizedBox(width: 6),
+                                                  Expanded(
+                                                    child: CommonText(
+                                                      data
+                                                          .data
+                                                          .devices[0]
+                                                          .deviceName,
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      color: const Color(
+                                                        0xff0370c3,
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 8),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                ],
                                               ),
-                                              CommonText(
-                                                data
-                                                    .data
-                                                    .devices[0]
-                                                    .sensors[0]
-                                                    .dataTime,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                textAlign: TextAlign.center,
-                                                color: const Color(0xff0370c3),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 12,
-                                          ),
-                                          height: 2,
-                                          color: const Color(0xff0370c3),
-                                        ),
-
-                                        // Sensors Grid
-                                        Obx(() {
-                                          return GridView.builder(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 14,
-                                              vertical: 16,
                                             ),
-                                            itemCount: controller
+                                            CommonText(
+                                              data
+                                                  .data
+                                                  .devices[0]
+                                                  .sensors[0]
+                                                  .dataTime,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              textAlign: TextAlign.center,
+                                              color: const Color(0xff0370c3),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                        ),
+                                        height: 2,
+                                        color: const Color(0xff0370c3),
+                                      ),
+
+                                      // Sensors Grid
+                                      Obx(() {
+                                        return GridView.builder(
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 16,
+                                          ),
+                                          itemCount: controller
+                                              .pondDataResponse
+                                              .value
+                                              ?.data
+                                              .devices[0]
+                                              .sensors
+                                              .length,
+                                          shrinkWrap: true,
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 2,
+                                                crossAxisSpacing: 10,
+                                                mainAxisSpacing: 10,
+                                                childAspectRatio: 1.3,
+                                              ),
+                                          itemBuilder: (context, index) {
+                                            var sensorData = controller
                                                 .pondDataResponse
                                                 .value
                                                 ?.data
                                                 .devices[0]
-                                                .sensors
-                                                .length,
-                                            shrinkWrap: true,
-                                            gridDelegate:
-                                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 2,
-                                                  crossAxisSpacing: 10,
-                                                  mainAxisSpacing: 10,
-                                                  childAspectRatio: 1.3,
-                                                ),
-                                            itemBuilder: (context, index) {
-                                              var sensorData = controller
-                                                  .pondDataResponse
-                                                  .value
-                                                  ?.data
-                                                  .devices[0]
-                                                  .sensors[index];
+                                                .sensors[index];
 
-                                              // Company ID logic (unchanged)
-                                              for (var i
-                                                  in controller
-                                                      .companyListResponse
-                                                      .value!
-                                                      .data!) {
-                                                if (i.name ==
-                                                    controller
-                                                        .pondListResponse
-                                                        .value
-                                                        ?.data[0]
-                                                        .astName) {
-                                                  controller.comId.value =
-                                                      i.id!;
-                                                  break;
-                                                }
+                                            // Company ID logic (unchanged)
+                                            for (var i
+                                                in controller
+                                                    .companyListResponse
+                                                    .value!
+                                                    .data!) {
+                                              if (i.name ==
+                                                  controller
+                                                      .pondListResponse
+                                                      .value
+                                                      ?.data[0]
+                                                      .astName) {
+                                                controller.comId.value = i.id!;
+                                                break;
                                               }
+                                            }
 
-                                              return InkWell(
-                                                onTap: () {
-                                                  final passedAssetId =
-                                                      controller
-                                                          .pondDataResponse
-                                                          .value
-                                                          ?.data
-                                                          .assetId ??
-                                                      controller
-                                                          .selectedAstId
-                                                          .value
-                                                          .toString();
-
-                                                  String? mappedSensorIdString;
-                                                  try {
-                                                    final sensorName =
-                                                        (sensorData?.sensorName ??
-                                                                '')
-                                                            .toString()
-                                                            .toLowerCase();
-                                                    final mapped = controller
-                                                        .sensorListResponse
+                                            return InkWell(
+                                              onTap: () {
+                                                final passedAssetId =
+                                                    controller
+                                                        .pondDataResponse
                                                         .value
                                                         ?.data
-                                                        .firstWhere(
-                                                          (s) =>
-                                                              s.sensorSensorName
-                                                                  .toString()
-                                                                  .toLowerCase() ==
-                                                              sensorName,
-                                                        );
-                                                    if (mapped != null) {
-                                                      mappedSensorIdString =
-                                                          mapped.sensorId
-                                                              .toString();
-                                                    }
-                                                  } catch (_) {
-                                                    mappedSensorIdString = null;
+                                                        .assetId ??
+                                                    controller
+                                                        .selectedAstId
+                                                        .value
+                                                        .toString();
+
+                                                String? mappedSensorIdString;
+                                                try {
+                                                  final sensorName =
+                                                      (sensorData?.sensorName ??
+                                                              '')
+                                                          .toString()
+                                                          .toLowerCase();
+                                                  final mapped = controller
+                                                      .sensorListResponse
+                                                      .value
+                                                      ?.data
+                                                      .firstWhere(
+                                                        (s) =>
+                                                            s.sensorSensorName
+                                                                .toString()
+                                                                .toLowerCase() ==
+                                                            sensorName,
+                                                      );
+                                                  if (mapped != null) {
+                                                    mappedSensorIdString =
+                                                        mapped.sensorId
+                                                            .toString();
                                                   }
+                                                } catch (_) {
+                                                  mappedSensorIdString = null;
+                                                }
 
-                                                  final sensorIdForGraph =
-                                                      mappedSensorIdString ??
-                                                      sensorData?.sensorId;
+                                                final sensorIdForGraph =
+                                                    mappedSensorIdString ??
+                                                    sensorData?.sensorId;
 
-                                                  Get.toNamed(
-                                                    Routes.GRAPH,
-                                                    arguments: {
-                                                      "comId": controller
-                                                          .comId
-                                                          .value,
-                                                      "assetId": passedAssetId,
-                                                      "sensorId":
-                                                          sensorIdForGraph,
-                                                      "type": "daily",
-                                                    },
-                                                  );
-                                                },
-                                                child: CommonContainer(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 4,
-                                                      ),
-                                                  child: Column(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Image.network(
-                                                          "${ApiService.baseUrl}/${controller.pondDataResponse.value?.data.devices[0].sensors[index].sensorIcon}",
-                                                          height: 40,
-                                                          width: 40,
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                CommonText(
-                                                                  sensorData?.dangerStatus ==
-                                                                          "invalid"
-                                                                      ? "No Data"
-                                                                      : _formatSensorValue(
-                                                                          sensorName:
-                                                                              sensorData?.sensorName,
-                                                                          rawValue:
-                                                                              sensorData?.lastValue,
-                                                                        ),
-                                                                  fontSize:
-                                                                      sensorData
-                                                                              ?.dangerStatus ==
-                                                                          "invalid"
-                                                                      ? 16
-                                                                      : 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  color:
-                                                                      sensorData
-                                                                              ?.dangerStatus ==
-                                                                          "perfect"
-                                                                      ? const Color(
-                                                                          0xff00cc00,
-                                                                        )
-                                                                      : Colors
-                                                                            .red,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
-                                                                ),
-                                                                const SizedBox(
-                                                                  width: 3,
-                                                                ),
-                                                                CommonText(
-                                                                  sensorData?.dangerStatus ==
-                                                                          "invalid"
-                                                                      ? ""
-                                                                      : "${sensorData?.sensorUnit}",
-                                                                  fontSize: 20,
-                                                                  color:
-                                                                      sensorData
-                                                                              ?.dangerStatus ==
-                                                                          "perfect"
-                                                                      ? const Color(
-                                                                          0xff00cc00,
-                                                                        )
-                                                                      : Colors
-                                                                            .red,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            CommonText(
-                                                              "${sensorData?.sensorName}",
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }),
-
-                                        const SizedBox(height: 16),
-
-                                        // ==================== AERATORS SECTION (UPDATED) ====================
-                                        Obx(() {
-                                          final aerators =
-                                              controller
-                                                  .pondDataResponse
-                                                  .value
-                                                  ?.data
-                                                  .devices[0]
-                                                  .aerators ??
-                                              [];
-                                          return ListView.builder(
-                                            itemCount: aerators.length,
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemBuilder: (BuildContext context, int index) {
-                                              final aerator = aerators[index];
-
-                                              return CommonContainer(
-                                                margin: const EdgeInsets.only(
-                                                  left: 14,
-                                                  right: 14,
-                                                  bottom: 16,
-                                                ),
+                                                Get.toNamed(
+                                                  Routes.GRAPH,
+                                                  arguments: {
+                                                    "comId":
+                                                        controller.comId.value,
+                                                    "assetId": passedAssetId,
+                                                    "sensorId":
+                                                        sensorIdForGraph,
+                                                    "type": "daily",
+                                                  },
+                                                );
+                                              },
+                                              child: CommonContainer(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 6,
+                                                      horizontal: 4,
                                                     ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                child: Column(
                                                   children: [
-                                                    CommonText(
-                                                      aerator.aeratorName,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                    Expanded(
+                                                      child: Image.network(
+                                                        "${ApiService.baseUrl}/${controller.pondDataResponse.value?.data.devices[0].sensors[index].sensorIcon}",
+                                                        height: 40,
+                                                        width: 40,
+                                                      ),
                                                     ),
-                                                    Obx(() {
-                                                      return Switch(
-                                                        value: controller
-                                                            .aeratorSwitch[index],
-                                                        onChanged: (bool value) {
-                                                          if (controller
-                                                              .commandInProgress
-                                                              .value) {
-                                                            try {
-                                                              Get.snackbar(
-                                                                'Error',
-                                                                'Please wait...',
-                                                                snackPosition:
-                                                                    SnackPosition
-                                                                        .BOTTOM,
-                                                              );
-                                                            } catch (_) {}
-                                                            return;
-                                                          }
-
-                                                          // Optimistic update
-                                                          controller
-                                                                  .aeratorSwitch[index] =
-                                                              value;
-
-                                                          // Send command to API
-                                                          controller
-                                                              .aeratorCommand(
-                                                                id: aerator
-                                                                    .aeratorId,
-                                                                command: value
-                                                                    ? 1
-                                                                    : 0,
-                                                                index: index,
-                                                              );
-                                                        },
-                                                        activeThumbColor:
-                                                            Colors.green,
-                                                        inactiveThumbColor:
-                                                            Colors.red,
-                                                      );
-                                                    }),
+                                                    Expanded(
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              CommonText(
+                                                                sensorData?.dangerStatus ==
+                                                                        "invalid"
+                                                                    ? "No Data"
+                                                                    : _formatSensorValue(
+                                                                        sensorName:
+                                                                            sensorData?.sensorName,
+                                                                        rawValue:
+                                                                            sensorData?.lastValue,
+                                                                      ),
+                                                                fontSize:
+                                                                    sensorData
+                                                                            ?.dangerStatus ==
+                                                                        "invalid"
+                                                                    ? 16
+                                                                    : 20,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color:
+                                                                    sensorData
+                                                                            ?.dangerStatus ==
+                                                                        "perfect"
+                                                                    ? const Color(
+                                                                        0xff00cc00,
+                                                                      )
+                                                                    : Colors
+                                                                          .red,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 3,
+                                                              ),
+                                                              CommonText(
+                                                                sensorData?.dangerStatus ==
+                                                                        "invalid"
+                                                                    ? ""
+                                                                    : "${sensorData?.sensorUnit}",
+                                                                fontSize: 20,
+                                                                color:
+                                                                    sensorData
+                                                                            ?.dangerStatus ==
+                                                                        "perfect"
+                                                                    ? const Color(
+                                                                        0xff00cc00,
+                                                                      )
+                                                                    : Colors
+                                                                          .red,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          CommonText(
+                                                            "${sensorData?.sensorName}",
+                                                            fontSize: 18,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
-                                              );
-                                            },
-                                          );
-                                        }),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }),
 
-                                        // Warning Messages (unchanged)
-                                        controller.pondDataResponse.value ==
-                                                null
-                                            ? const SizedBox()
-                                            : Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 12,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: List.generate(
-                                                    controller
+                                      const SizedBox(height: 16),
+
+                                      // ==================== AERATORS SECTION (UPDATED) ====================
+                                      Obx(() {
+                                        final aerators =
+                                            controller
+                                                .pondDataResponse
+                                                .value
+                                                ?.data
+                                                .devices[0]
+                                                .aerators ??
+                                            [];
+                                        return ListView.builder(
+                                          itemCount: aerators.length,
+                                          shrinkWrap: true,
+                                          physics:
+                                              const NeverScrollableScrollPhysics(),
+                                          itemBuilder: (BuildContext context, int index) {
+                                            final aerator = aerators[index];
+
+                                            return CommonContainer(
+                                              margin: const EdgeInsets.only(
+                                                left: 14,
+                                                right: 14,
+                                                bottom: 16,
+                                              ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 16,
+                                                    vertical: 6,
+                                                  ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  CommonText(
+                                                    aerator.aeratorName,
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  Obx(() {
+                                                    return Switch(
+                                                      value: controller
+                                                          .aeratorSwitch[index],
+                                                      onChanged: (bool value) {
+                                                        if (controller
+                                                            .commandInProgress
+                                                            .value) {
+                                                          try {
+                                                            Get.snackbar(
+                                                              'Error',
+                                                              'Please wait...',
+                                                              snackPosition:
+                                                                  SnackPosition
+                                                                      .BOTTOM,
+                                                            );
+                                                          } catch (_) {}
+                                                          return;
+                                                        }
+
+                                                        // Optimistic update
+                                                        controller
+                                                                .aeratorSwitch[index] =
+                                                            value;
+
+                                                        // Send command to API
+                                                        controller
+                                                            .aeratorCommand(
+                                                              id: aerator
+                                                                  .aeratorId,
+                                                              command: value
+                                                                  ? 1
+                                                                  : 0,
+                                                              index: index,
+                                                            );
+                                                      },
+                                                      activeThumbColor:
+                                                          Colors.green,
+                                                      inactiveThumbColor:
+                                                          Colors.red,
+                                                    );
+                                                  }),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }),
+
+                                      // Warning Messages (unchanged)
+                                      controller.pondDataResponse.value == null
+                                          ? const SizedBox()
+                                          : Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 14,
+                                                    vertical: 12,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: List.generate(
+                                                  controller
+                                                      .pondDataResponse
+                                                      .value!
+                                                      .data
+                                                      .devices[0]
+                                                      .sensors
+                                                      .length,
+                                                  (index) {
+                                                    var sensor = controller
                                                         .pondDataResponse
                                                         .value!
                                                         .data
                                                         .devices[0]
-                                                        .sensors
-                                                        .length,
-                                                    (index) {
-                                                      var sensor = controller
-                                                          .pondDataResponse
-                                                          .value!
-                                                          .data
-                                                          .devices[0]
-                                                          .sensors[index];
-                                                      var data =
-                                                          sensor.sensorName;
-                                                      var value =
-                                                          double.tryParse(
-                                                            sensor.lastValue
-                                                                .toString(),
-                                                          ) ??
-                                                          0.0;
+                                                        .sensors[index];
+                                                    var data =
+                                                        sensor.sensorName;
+                                                    var value =
+                                                        double.tryParse(
+                                                          sensor.lastValue
+                                                              .toString(),
+                                                        ) ??
+                                                        0.0;
 
-                                                      if (data == "pH" &&
-                                                          value < 7) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                    if (data == "pH" &&
+                                                        value < 7) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "চুন প্রয়োগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "চুন প্রয়োগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data == "pH" &&
-                                                          value > 8.5) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "pH" &&
+                                                        value > 8.5) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "টিএসপি, জিপসাম, ভিনেগার অথবা গভীর নলকূপের পানি যোগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "টিএসপি, জিপসাম, ভিনেগার অথবা গভীর নলকূপের পানি যোগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data == "DO" &&
-                                                          value < 3) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "DO" &&
+                                                        value < 3) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "এরেটর চালান বা গভীর নলকূপের পানি যোগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "এরেটর চালান বা গভীর নলকূপের পানি যোগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data == "TDS" &&
-                                                          value < 100) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "TDS" &&
+                                                        value < 100) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "চুন, জিপসাম অথবা লবণ যোগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "চুন, জিপসাম অথবা লবণ যোগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data == "TDS" &&
-                                                          value > 1000) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "TDS" &&
+                                                        value > 1000) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "গভীর নলকূপের পানি যোগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "গভীর নলকূপের পানি যোগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data ==
-                                                              "Temperature" &&
-                                                          value > 34) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "Temperature" &&
+                                                        value > 34) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "গভীর নলকূপের পানি যোগ করুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "গভীর নলকূপের পানি যোগ করুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      }
-                                                      if (data == "NH3" &&
-                                                          value > 0.5) {
-                                                        return const Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            CommonText(
-                                                              "⚠️ Warning: ",
-                                                              color: Colors.red,
+                                                          ),
+                                                        ],
+                                                      );
+                                                    }
+                                                    if (data == "NH3" &&
+                                                        value > 0.5) {
+                                                      return const Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          CommonText(
+                                                            "⚠️ Warning: ",
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          Expanded(
+                                                            child: CommonText(
+                                                              "হররা বা জাল টানুন।",
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
+                                                              maxLines: 3,
                                                             ),
-                                                            Expanded(
-                                                              child: CommonText(
-                                                                "হররা বা জাল টানুন।",
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                maxLines: 3,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      } else {
-                                                        return const CommonText(
-                                                          "",
-                                                        );
-                                                      }
-                                                    },
-                                                  ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    } else {
+                                                      return const CommonText(
+                                                        "",
+                                                      );
+                                                    }
+                                                  },
                                                 ),
                                               ),
-                                      ],
-                                    ),
+                                            ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ],
-                          );
-                  }),
-                ),
-              ],
-            ),
+                            ),
+                          ],
+                        );
+                }),
+              ),
+            ],
           ),
         ),
       ),

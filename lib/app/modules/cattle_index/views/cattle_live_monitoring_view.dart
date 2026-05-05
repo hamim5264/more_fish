@@ -18,35 +18,33 @@ class CattleLiveMonitoringView extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          body: Column(
-            children: [
-              Obx(
-                () => CommonAppBar(
-                  title: 'Cattle Care',
-                  cityName: 'Dhaka',
-                  date: header.formattedDate.value,
-                  time: header.formattedTime.value,
-                  temp: header.tempText.value,
-                  humidity: header.humidityText.value,
-                  logoAssetPath: 'assets/icons/dma_cattle_care.png',
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                ),
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        body: Column(
+          children: [
+            Obx(
+              () => CommonAppBar(
+                title: 'Cattle Care',
+                cityName: 'Dhaka',
+                date: header.formattedDate.value,
+                time: header.formattedTime.value,
+                temp: header.tempText.value,
+                humidity: header.humidityText.value,
+                logoAssetPath: 'assets/icons/dma_cattle_care.png',
+                backgroundColor: const Color.fromARGB(255, 255, 255, 255),
               ),
-              Expanded(
-                // Cattle Care live monitoring UI is visible even when a device isn't connected yet.
-                // (No login-gating for now; backend/device integration will be added later.)
-                child: Builder(
-                  builder: (_) {
-                    final ctrl = Get.put(CattleLiveMonitoringController());
-                    return _LoggedInDashboard(controller: ctrl);
-                  },
-                ),
+            ),
+            Expanded(
+              // Cattle Care live monitoring UI is visible even when a device isn't connected yet.
+              // (No login-gating for now; backend/device integration will be added later.)
+              child: Builder(
+                builder: (_) {
+                  final ctrl = Get.put(CattleLiveMonitoringController());
+                  return _LoggedInDashboard(controller: ctrl);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
