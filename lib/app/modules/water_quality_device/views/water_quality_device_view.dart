@@ -958,18 +958,6 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
     return displayValue.toStringAsFixed(2);
   }
 
-  Future<void> _handleRefresh() async {
-    try {
-      await Future.wait([
-        Future(() => controller.pondList()),
-        Future(() => controller.sensorList()),
-        Future(() => controller.CompanyList()),
-      ]).timeout(const Duration(seconds: 2));
-    } catch (_) {
-      // ignore errors/timeouts so the RefreshIndicator completes
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
@@ -1135,13 +1123,8 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                               }),
                             ),
                             Expanded(
-                              child: RefreshIndicator(
-                                onRefresh: _handleRefresh,
-                                displacement: 40,
-                                color: Colors.blue,
-                                child: SingleChildScrollView(
-                                  physics: const AlwaysScrollableScrollPhysics(),
-                                  child: Container(
+                              child: SingleChildScrollView(
+                                child: Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 12,
@@ -1465,6 +1448,9 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                           itemBuilder: (BuildContext context, int index) {
                                             final aerator = aerators[index];
 
+                                            final bool isOnline =
+                                                aerator.isOnline == true;
+
                                             return CommonContainer(
                                               margin: const EdgeInsets.only(
                                                 left: 14,
@@ -1481,10 +1467,35 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: [
-                                                  CommonText(
-                                                    aerator.aeratorName,
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
+                                                  Row(
+                                                    children: [
+                                                      Container(
+                                                        width: 18,
+                                                        height: 18,
+                                                        decoration: BoxDecoration(
+                                                          color: isOnline
+                                                              ? const Color(0xff2fbf71)
+                                                              : const Color(0xffe74c3c),
+                                                          shape: BoxShape.circle,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 12),
+                                                      SizedBox(
+                                                        width: MediaQuery.of(context)
+                                                                .size
+                                                                .width -
+                                                            220,
+                                                        child: CommonText(
+                                                          aerator.aeratorName,
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                   Obx(() {
                                                     return Switch(
@@ -1763,8 +1774,7 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                 ),
                               ),
                             ),
-                            )
-                          ]
+                          ],
                         );
                 }),
               ),

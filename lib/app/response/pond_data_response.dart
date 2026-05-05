@@ -13,16 +13,18 @@ class PondDataResponse {
     required this.data,
   });
 
-  factory PondDataResponse.fromRawJson(String str) => PondDataResponse.fromJson(json.decode(str));
+  factory PondDataResponse.fromRawJson(String str) =>
+      PondDataResponse.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory PondDataResponse.fromJson(Map<String, dynamic> json) => PondDataResponse(
-    success: json["success"],
-    statusCode: json["status_code"],
-    message: json["message"],
-    data: Data.fromJson(json["data"]),
-  );
+  factory PondDataResponse.fromJson(Map<String, dynamic> json) =>
+      PondDataResponse(
+        success: json["success"],
+        statusCode: json["status_code"],
+        message: json["message"],
+        data: Data.fromJson(json["data"]),
+      );
 
   Map<String, dynamic> toJson() => {
     "success": success,
@@ -88,7 +90,9 @@ class Device {
     deviceName: json["device_name"],
     deviceStatus: json["device_status"],
     sensors: List<Sensor>.from(json["sensors"].map((x) => Sensor.fromJson(x))),
-    aerators: List<Aerator>.from(json["aerators"].map((x) => Aerator.fromJson(x))),
+    aerators: List<Aerator>.from(
+      json["aerators"].map((x) => Aerator.fromJson(x)),
+    ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -105,12 +109,14 @@ class Aerator {
   String aeratorName;
   String aeratorId;
   bool isRunning;
+  bool isOnline;
 
   Aerator({
     required this.aeratorPk,
     required this.aeratorName,
     required this.aeratorId,
     required this.isRunning,
+    required this.isOnline,
   });
 
   factory Aerator.fromRawJson(String str) => Aerator.fromJson(json.decode(str));
@@ -121,7 +127,8 @@ class Aerator {
     aeratorPk: json["aerator_pk"],
     aeratorName: json["aerator_name"],
     aeratorId: json["aerator_id"],
-    isRunning: json["is_running"],
+    isRunning: _asBool(json["is_running"] ?? json["is_online"]),
+    isOnline: _asBool(json["is_online"] ?? json["is_running"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -129,7 +136,18 @@ class Aerator {
     "aerator_name": aeratorName,
     "aerator_id": aeratorId,
     "is_running": isRunning,
+    "is_online": isOnline,
   };
+
+  static bool _asBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      return normalized == 'true' || normalized == '1' || normalized == 'yes';
+    }
+    if (value is num) return value != 0;
+    return false;
+  }
 }
 
 class Sensor {
@@ -223,20 +241,15 @@ class Weather {
 class WeatherDistrict {
   String district;
 
-  WeatherDistrict({
-    required this.district,
-  });
+  WeatherDistrict({required this.district});
 
-  factory WeatherDistrict.fromRawJson(String str) => WeatherDistrict.fromJson(json.decode(str));
+  factory WeatherDistrict.fromRawJson(String str) =>
+      WeatherDistrict.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
-  factory WeatherDistrict.fromJson(Map<String, dynamic> json) => WeatherDistrict(
-    district: json["district"],
-  );
+  factory WeatherDistrict.fromJson(Map<String, dynamic> json) =>
+      WeatherDistrict(district: json["district"]);
 
-  Map<String, dynamic> toJson() => {
-    "district": district,
-  };
+  Map<String, dynamic> toJson() => {"district": district};
 }
-
