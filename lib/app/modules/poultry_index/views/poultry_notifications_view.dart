@@ -42,18 +42,13 @@ class PoultryNotificationsView extends GetView<PoultryNotificationsController> {
                   if (!controller.hasToken.value) {
                     return const Center(
                       child: Text(
-                        'নোটিফিকেশন দেখতে লগইন করুন',
+                        'Sign in to view notifications.',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     );
-                  }
-
-                  if (controller.isLoading.value &&
-                      controller.notifications.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (controller.error.value.isNotEmpty &&
@@ -72,7 +67,7 @@ class PoultryNotificationsView extends GetView<PoultryNotificationsController> {
                   if (controller.notifications.isEmpty) {
                     return const Center(
                       child: Text(
-                        'এখনও কোনো নোটিফিকেশন নেই',
+                        'No cached notifications yet.',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

@@ -218,4 +218,6 @@ class PoultryDevice {
       name: (json['name'] ?? '').toString(),
     );
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
 }

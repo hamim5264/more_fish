@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../repo/devices_repo.dart';
 import '../../../response/aerator_command_response.dart';
 import '../../../response/company_list_response.dart';
@@ -27,10 +29,18 @@ class WaterQualityDeviceController extends GetxController {
   var commandInProgress = false.obs;
   bool _firstFetch = true;
 
+  static const String _cachePondListKey = 'morefish_pond_list_cache';
+  static const String _cachePondDataKey = 'morefish_pond_data_cache';
+  static const String _cacheSensorListKey = 'morefish_sensor_list_cache';
+  static const String _cacheCompanyListKey = 'morefish_company_list_cache';
+  static const String _cacheSelectedAstIdKey = 'morefish_selected_ast_id';
+  static const String _cacheSelectedAstNameKey = 'morefish_selected_ast_name';
+
   @override
   void onInit() {
     super.onInit();
     debugPrint('[WaterQuality] onInit -> pondList + companyList + polling');
+    _loadCachedState();
     pondList();
     CompanyList();
     _startPolling();
@@ -43,8 +53,8 @@ class WaterQualityDeviceController extends GetxController {
   }
 
   void _startPolling() {
-    debugPrint('[WaterQuality] Polling started (every 1 second)');
-    _pollTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    debugPrint('[WaterQuality] Polling started (every 1 minute)');
+    _pollTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
       if (isFetching.value) return;
       if (selectedAstId.value == 0) return;
 
@@ -59,6 +69,7 @@ class WaterQualityDeviceController extends GetxController {
     response.fold((l) => print("${l.message}"), (r) {
       debugPrint('[API] getPondList() success -> ponds: ${r.data.length}');
       pondListResponse.value = r;
+      _cachePondList(r);
       if (r.data.isNotEmpty) {
         debugPrint('[Flow] First pond selected -> id: ${r.data[0].id}');
         pondData(id: r.data[0].id);
@@ -73,6 +84,7 @@ class WaterQualityDeviceController extends GetxController {
     // loader removed
 
     if (id != null) selectedAstId.value = id;
+    _cacheSelectedAstId(selectedAstId.value);
 
     debugPrint('[API] getPondData() requested -> asset_id: $id');
     var response = await devicesRepository.getPondData(id: id);
@@ -86,6 +98,7 @@ class WaterQualityDeviceController extends GetxController {
       (r) {
         debugPrint('[API] getPondData() success');
         pondDataResponse.value = r;
+        _cachePondData(r);
 
         // Reset and populate aerator switches from fresh API data
         aeratorSwitch.clear();
@@ -123,6 +136,7 @@ class WaterQualityDeviceController extends GetxController {
       (r) {
         debugPrint('[API] getSensorList() success');
         sensorListResponse.value = r;
+        _cacheSensorList(r);
       },
     );
   }
@@ -140,8 +154,105 @@ class WaterQualityDeviceController extends GetxController {
           '[API] getCompanyList() success -> companies: ${r.data?.length}',
         );
         companyListResponse.value = r;
+        _cacheCompanyList(r);
       },
     );
+  }
+
+  Future<void> selectAsset({required String name, required int id}) async {
+    selectedAstName.value = name;
+    selectedAstId.value = id;
+    await _cacheSelectedAstId(id);
+    await _cacheSelectedAstName(name);
+    pondData(id: id);
+  }
+
+  Future<void> _loadCachedState() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      final cachedPondList = prefs.getString(_cachePondListKey);
+      if (cachedPondList != null && cachedPondList.isNotEmpty) {
+        pondListResponse.value = PondListResponse.fromRawJson(cachedPondList);
+      }
+
+      final cachedPondData = prefs.getString(_cachePondDataKey);
+      if (cachedPondData != null && cachedPondData.isNotEmpty) {
+        pondDataResponse.value = PondDataResponse.fromRawJson(cachedPondData);
+        aeratorSwitch.clear();
+      }
+
+      final cachedSensorList = prefs.getString(_cacheSensorListKey);
+      if (cachedSensorList != null && cachedSensorList.isNotEmpty) {
+        sensorListResponse.value = SensorListResponse.fromRawJson(
+          cachedSensorList,
+        );
+      }
+
+      final cachedCompanyList = prefs.getString(_cacheCompanyListKey);
+      if (cachedCompanyList != null && cachedCompanyList.isNotEmpty) {
+        companyListResponse.value = CompanyListResponse.fromRawJson(
+          cachedCompanyList,
+        );
+      }
+
+      final cachedAstId = prefs.getInt(_cacheSelectedAstIdKey);
+      if (cachedAstId != null) {
+        selectedAstId.value = cachedAstId;
+      }
+
+      final cachedAstName = prefs.getString(_cacheSelectedAstNameKey);
+      if (cachedAstName != null && cachedAstName.isNotEmpty) {
+        selectedAstName.value = cachedAstName;
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _cachePondList(PondListResponse response) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cachePondListKey, response.toRawJson());
+  }
+
+  Future<void> _cachePondData(PondDataResponse response) async {
+    final prefs = await SharedPreferences.getInstance();
+    final payload = _stripAerators(response);
+    await prefs.setString(_cachePondDataKey, jsonEncode(payload));
+  }
+
+  Future<void> _cacheSensorList(SensorListResponse response) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cacheSensorListKey, response.toRawJson());
+  }
+
+  Future<void> _cacheCompanyList(CompanyListResponse response) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cacheCompanyListKey, response.toRawJson());
+  }
+
+  Future<void> _cacheSelectedAstId(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_cacheSelectedAstIdKey, id);
+  }
+
+  Future<void> _cacheSelectedAstName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cacheSelectedAstNameKey, name.trim());
+  }
+
+  Map<String, dynamic> _stripAerators(PondDataResponse response) {
+    final payload = response.toJson();
+    final data = payload['data'];
+    if (data is Map<String, dynamic>) {
+      final devices = data['devices'];
+      if (devices is List) {
+        for (final device in devices) {
+          if (device is Map<String, dynamic>) {
+            device['aerators'] = <dynamic>[];
+          }
+        }
+      }
+    }
+    return payload;
   }
 
   // ==================== UPDATED AERATOR COMMAND ====================

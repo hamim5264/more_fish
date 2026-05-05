@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 // loader removed
@@ -30,12 +31,17 @@ class PoultryLiveMonitoringController extends GetxController
   bool _isRefreshInProgress = false;
   DateTime? _lastPageVisibleRefreshAt;
 
-  static const Duration _refreshInterval = Duration(seconds: 1);
+  static const Duration _refreshInterval = Duration(minutes: 1);
+
+  static const String _cacheDevicesKey = 'poultry_live_devices_cache';
+  static const String _cacheLiveDataKey = 'poultry_live_data_cache';
+  static const String _cacheSelectedDeviceKey = 'poultry_live_selected_device';
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
+    _loadCachedState();
     _bootstrap();
   }
 
@@ -65,8 +71,6 @@ class PoultryLiveMonitoringController extends GetxController
   }
 
   Future<void> loadDevices() async {
-    final showOverlay = liveData.value == null;
-
     try {
       isLoading.value = true;
       error.value = '';
@@ -76,7 +80,11 @@ class PoultryLiveMonitoringController extends GetxController
 
       if (list.isNotEmpty) {
         switchUiState.clear();
-        selectedDeviceId.value = list.first.id;
+        final cachedId = selectedDeviceId.value;
+        final match = list.any((d) => d.id == cachedId);
+        selectedDeviceId.value = match ? cachedId : list.first.id;
+        await _cacheDevices(list);
+        await _cacheSelectedDeviceId(selectedDeviceId.value);
         await refreshLiveData();
         _startPolling();
       }
@@ -121,6 +129,7 @@ class PoultryLiveMonitoringController extends GetxController
   Future<void> onDeviceChanged(String deviceId) async {
     switchUiState.clear();
     selectedDeviceId.value = deviceId;
+    await _cacheSelectedDeviceId(deviceId);
     await refreshLiveData();
     _startPolling();
   }
@@ -160,6 +169,7 @@ class PoultryLiveMonitoringController extends GetxController
 
       liveData.value = await _repo.getLatestLiveData(deviceId: id);
       _syncSwitchUiStateWithLiveData();
+      await _cacheLiveData(liveData.value);
     } catch (e) {
       error.value = e.toString();
     } finally {
@@ -244,9 +254,72 @@ class PoultryLiveMonitoringController extends GetxController
     _pollTimer?.cancel();
 
     _pollTimer = Timer.periodic(_refreshInterval, (_) {
-      // Poll dashboard every second to keep switch states updated.
+      // Poll dashboard every minute to keep switch states updated.
       refreshLiveData(silent: true);
     });
+  }
+
+  Future<void> _loadCachedState() async {
+    try {
+      final storage = Get.find<LoginTokenStorage>();
+      final prefs = storage.sharedPreferences;
+
+      final cachedDevices = prefs.getString(_cacheDevicesKey);
+      if (cachedDevices != null && cachedDevices.isNotEmpty) {
+        final raw = jsonDecode(cachedDevices);
+        if (raw is List) {
+          devices.assignAll(
+            raw
+                .whereType<Map>()
+                .map(
+                  (e) => PoultryDevice.fromJson(Map<String, dynamic>.from(e)),
+                )
+                .toList(),
+          );
+        }
+      }
+
+      final cachedDeviceId = prefs.getString(_cacheSelectedDeviceKey);
+      if (cachedDeviceId != null && cachedDeviceId.trim().isNotEmpty) {
+        selectedDeviceId.value = cachedDeviceId;
+      } else if (devices.isNotEmpty) {
+        selectedDeviceId.value = devices.first.id;
+      }
+
+      final cachedLiveData = prefs.getString(_cacheLiveDataKey);
+      if (cachedLiveData != null && cachedLiveData.isNotEmpty) {
+        final raw = jsonDecode(cachedLiveData);
+        if (raw is Map) {
+          liveData.value = PoultryLiveData.fromJson(
+            Map<String, dynamic>.from(raw),
+          );
+          _syncSwitchUiStateWithLiveData();
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _cacheDevices(List<PoultryDevice> list) async {
+    final storage = Get.find<LoginTokenStorage>();
+    final prefs = storage.sharedPreferences;
+    final payload = jsonEncode(list.map((d) => d.toJson()).toList());
+    await prefs.setString(_cacheDevicesKey, payload);
+  }
+
+  Future<void> _cacheSelectedDeviceId(String deviceId) async {
+    final storage = Get.find<LoginTokenStorage>();
+    final prefs = storage.sharedPreferences;
+    await prefs.setString(_cacheSelectedDeviceKey, deviceId.trim());
+  }
+
+  Future<void> _cacheLiveData(PoultryLiveData? data) async {
+    if (data == null) return;
+    final storage = Get.find<LoginTokenStorage>();
+    final prefs = storage.sharedPreferences;
+    final payload = Map<String, dynamic>.from(data.toJson());
+    // Do not cache switch states.
+    payload.remove('switches');
+    await prefs.setString(_cacheLiveDataKey, jsonEncode(payload));
   }
 
   void _syncSwitchUiStateWithLiveData() {

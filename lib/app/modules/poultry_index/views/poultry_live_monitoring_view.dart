@@ -68,7 +68,7 @@ class _LoggedInDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       if (controller.isLoading.value && controller.liveData.value == null) {
-        return const Center(child: CircularProgressIndicator());
+        return const Center(child: Text('Waiting for live data...'));
       }
 
       if (controller.error.value.isNotEmpty &&

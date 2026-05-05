@@ -43,7 +43,7 @@ class ProfileView extends GetView<ProfileController> {
                   return controller.isLoggedIn.isEmpty
                       ? const SizedBox()
                       : data == null
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: Text('No cached profile yet.'))
                       : Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(

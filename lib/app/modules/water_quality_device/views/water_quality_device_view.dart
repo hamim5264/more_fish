@@ -1010,7 +1010,7 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                   child: Obx(() {
                     var data = controller.pondDataResponse.value;
                     return data == null
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(child: Text('Waiting for live data...'))
                         : Column(
                             children: [
                               Center(
@@ -1072,13 +1072,9 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                     );
                                                 final selectedId =
                                                     selectedItem['id'];
-
-                                                controller
-                                                        .selectedAstName
-                                                        .value =
-                                                    newValue;
-                                                controller.pondData(
-                                                  id: selectedId,
+                                                controller.selectAsset(
+                                                  name: newValue,
+                                                  id: selectedId as int,
                                                 );
                                               }
                                             },

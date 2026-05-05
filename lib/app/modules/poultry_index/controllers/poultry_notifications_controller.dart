@@ -16,6 +16,8 @@ class PoultryNotificationsController extends GetxController {
   Timer? _pollingTimer;
   bool _isRequestInFlight = false;
 
+  static const String _cacheNotificationsKey = 'poultry_notifications_cache';
+
   @override
   void onInit() {
     super.onInit();
@@ -23,13 +25,14 @@ class PoultryNotificationsController extends GetxController {
   }
 
   Future<void> _bootstrap() async {
-    await fetchNotifications(showLoader: true);
+    await _loadCachedNotifications();
+    await fetchNotifications(showLoader: false);
     _startPolling();
   }
 
   void _startPolling() {
     _pollingTimer?.cancel();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+    _pollingTimer = Timer.periodic(const Duration(minutes: 1), (_) {
       fetchNotifications(showLoader: false);
     });
   }
@@ -68,6 +71,7 @@ class PoultryNotificationsController extends GetxController {
             .map(PoultryNotificationItem.fromJson)
             .toList();
         notifications.assignAll(data);
+        await _cacheNotifications(data);
         return;
       }
 
@@ -94,47 +98,31 @@ class PoultryNotificationsController extends GetxController {
 
     final highMatch = highPattern.firstMatch(text);
     if (highMatch != null) {
-      final sensor = _sensorNameBn(highMatch.group(1) ?? '');
+      final sensor = _sensorNameLabel(highMatch.group(1) ?? '');
       final value = highMatch.group(2) ?? '';
-      final unit = _unitBn(highMatch.group(3) ?? '');
+      final unit = _unitLabel(highMatch.group(3) ?? '');
       final max = highMatch.group(4) ?? '';
-      return 'উচ্চ সতর্কতা: $sensor এর মান $value $unit, নিরাপদ সর্বোচ্চ সীমা $max $unit এর বেশি।';
+      return 'High alert: $sensor is $value $unit, above the safe maximum of $max $unit.';
     }
 
     final lowMatch = lowPattern.firstMatch(text);
     if (lowMatch != null) {
-      final sensor = _sensorNameBn(lowMatch.group(1) ?? '');
+      final sensor = _sensorNameLabel(lowMatch.group(1) ?? '');
       final value = lowMatch.group(2) ?? '';
-      final unit = _unitBn(lowMatch.group(3) ?? '');
+      final unit = _unitLabel(lowMatch.group(3) ?? '');
       final min = lowMatch.group(4) ?? '';
-      return 'নিম্ন সতর্কতা: $sensor এর মান $value $unit, নিরাপদ সর্বনিম্ন সীমা $min $unit এর কম।';
+      return 'Low alert: $sensor is $value $unit, below the safe minimum of $min $unit.';
     }
 
-    return text
-        .replaceAll('HIGH ALERT:', 'উচ্চ সতর্কতা:')
-        .replaceAll('LOW ALERT:', 'নিম্ন সতর্কতা:')
-        .replaceAll('temperature', 'তাপমাত্রা')
-        .replaceAll('humidity', 'আর্দ্রতা')
-        .replaceAll('methane_ppm', 'মিথেন');
+    return text;
   }
 
-  String _sensorNameBn(String sensor) {
-    final key = sensor.toLowerCase();
-    switch (key) {
-      case 'temperature':
-        return 'তাপমাত্রা';
-      case 'humidity':
-        return 'আর্দ্রতা';
-      case 'methane_ppm':
-        return 'মিথেন';
-      default:
-        return sensor;
-    }
+  String _sensorNameLabel(String sensor) {
+    return sensor.trim();
   }
 
-  String _unitBn(String unit) {
+  String _unitLabel(String unit) {
     final normalized = unit.trim();
-    if (normalized.toLowerCase() == 'ppm') return 'পিপিএম';
     return normalized;
   }
 
@@ -144,6 +132,34 @@ class PoultryNotificationsController extends GetxController {
     return normalized.isNotEmpty &&
         normalized != 'null' &&
         normalized != 'undefined';
+  }
+
+  Future<void> _loadCachedNotifications() async {
+    try {
+      final storage = Get.find<LoginTokenStorage>();
+      final prefs = storage.sharedPreferences;
+      final cached = prefs.getString(_cacheNotificationsKey);
+      if (cached == null || cached.isEmpty) return;
+
+      final raw = jsonDecode(cached);
+      if (raw is! List) return;
+
+      final data = raw
+          .whereType<Map>()
+          .map(
+            (e) =>
+                PoultryNotificationItem.fromJson(Map<String, dynamic>.from(e)),
+          )
+          .toList();
+      notifications.assignAll(data);
+    } catch (_) {}
+  }
+
+  Future<void> _cacheNotifications(List<PoultryNotificationItem> items) async {
+    final storage = Get.find<LoginTokenStorage>();
+    final prefs = storage.sharedPreferences;
+    final payload = jsonEncode(items.map((e) => e.toJson()).toList());
+    await prefs.setString(_cacheNotificationsKey, payload);
   }
 
   @override
@@ -183,4 +199,14 @@ class PoultryNotificationItem {
       notifiedAt: DateTime.tryParse((json['notified_at'] ?? '').toString()),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'sensor_name': sensorName,
+    'value': value,
+    'urgency': urgency,
+    'message': message,
+    'is_read': isRead,
+    'notified_at': notifiedAt?.toIso8601String(),
+  };
 }
