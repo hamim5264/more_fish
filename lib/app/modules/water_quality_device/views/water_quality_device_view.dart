@@ -958,6 +958,18 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
     return displayValue.toStringAsFixed(2);
   }
 
+  Future<void> _handleRefresh() async {
+    try {
+      await Future.wait([
+        Future(() => controller.pondList()),
+        Future(() => controller.sensorList()),
+        Future(() => controller.CompanyList()),
+      ]).timeout(const Duration(seconds: 2));
+    } catch (_) {
+      // ignore errors/timeouts so the RefreshIndicator completes
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
@@ -1123,8 +1135,13 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                               }),
                             ),
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: Container(
+                              child: RefreshIndicator(
+                                onRefresh: _handleRefresh,
+                                displacement: 40,
+                                color: Colors.blue,
+                                child: SingleChildScrollView(
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  child: Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 12,
                                     vertical: 12,
@@ -1746,7 +1763,8 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                 ),
                               ),
                             ),
-                          ],
+                            )
+                          ]
                         );
                 }),
               ),
