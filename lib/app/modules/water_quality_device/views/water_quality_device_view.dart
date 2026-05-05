@@ -2,7 +2,7 @@
 // import 'package:dropdown_button2/dropdown_button2.dart';
 // import 'package:get/get.dart';
 // import 'package:flutter/services.dart';
-// import 'package:flutter_easyloading/flutter_easyloading.dart';
+// loader removed
 // import 'package:more_fish/app/common_widgets/common_text.dart';
 // import 'package:more_fish/app/service/service.dart';
 // import '../../../common_widgets/common_app_bar.dart';
@@ -40,9 +40,6 @@
 //               }
 //               // If a command is in progress, dismiss the loading and cancel the UI lock
 //               if (controller.commandInProgress.value) {
-//                 try {
-//                   EasyLoading.dismiss();
-//                 } catch (_) {}
 //                 controller.commandInProgress.value = false;
 //                 debugPrint('[ui] User dismissed loading via tap');
 //                 return;
@@ -602,11 +599,7 @@
 //                                                           if (controller
 //                                                               .commandInProgress
 //                                                               .value) {
-//                                                             try {
-//                                                               EasyLoading.showError(
-//                                                                 'Please wait...',
-//                                                               );
-//                                                             } catch (_) {}
+//                                                             // loader removed
 //                                                             return;
 //                                                           }
 
@@ -627,11 +620,7 @@
 //                                                             debugPrint(
 //                                                               '[aerator] Blocked ON: isRunning=false for index $index',
 //                                                             );
-//                                                             try {
-//                                                               EasyLoading.showError(
-//                                                                 'Cannot turn ON: aerator unavailable',
-//                                                               );
-//                                                             } catch (_) {}
+//                                                             // loader removed
 //                                                             return;
 //                                                           }
 
@@ -641,11 +630,7 @@
 //                                                             debugPrint(
 //                                                               '[aerator] Blocked OFF: isRunning=true for index $index',
 //                                                             );
-//                                                             try {
-//                                                               EasyLoading.showError(
-//                                                                 'Cannot turn OFF: aerator locked',
-//                                                               );
-//                                                             } catch (_) {}
+//                                                             // loader removed
 //                                                             return;
 //                                                           }
 
@@ -946,7 +931,7 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+
 import 'package:more_fish/app/common_widgets/common_text.dart';
 import 'package:more_fish/app/service/service.dart';
 import '../../../common_widgets/common_app_bar.dart';
@@ -998,9 +983,6 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
               }
 
               if (controller.commandInProgress.value) {
-                try {
-                  EasyLoading.dismiss();
-                } catch (_) {}
                 controller.commandInProgress.value = false;
                 debugPrint('[ui] User dismissed loading via tap');
                 return;
@@ -1519,8 +1501,12 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                               .commandInProgress
                                                               .value) {
                                                             try {
-                                                              EasyLoading.showError(
+                                                              Get.snackbar(
+                                                                'Error',
                                                                 'Please wait...',
+                                                                snackPosition:
+                                                                    SnackPosition
+                                                                        .BOTTOM,
                                                               );
                                                             } catch (_) {}
                                                             return;

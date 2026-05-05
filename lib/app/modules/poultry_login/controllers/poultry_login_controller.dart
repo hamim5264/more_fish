@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
 import '../../../repo/auth.dart';
@@ -49,7 +48,7 @@ class PoultryLoginController extends GetxController {
 
   Future<void> login({required String email, required String password}) async {
     debugPrint('Poultry login email: $email');
-    EasyLoading.show(status: 'Logging in...');
+    // loader removed
 
     try {
       var response = await authRepository.setLogin(
@@ -106,7 +105,6 @@ class PoultryLoginController extends GetxController {
       );
     } finally {
       isActiveLoginButton.value = true;
-      EasyLoading.dismiss();
     }
   }
 }

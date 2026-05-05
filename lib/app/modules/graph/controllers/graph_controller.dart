@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:more_fish/app/service/local_storage.dart';
 import 'package:more_fish/app/response/graph_response.dart';
 import '../../../repo/devices_repo.dart';
@@ -65,7 +64,7 @@ class GraphController extends GetxController {
     isLoading.value = true;
     error.value = '';
 
-    EasyLoading.show(status: 'Loading graph...');
+    // loader removed
     debugPrint(
       'Graph loading start: flow=${isPoultryFlow ? 'poultry' : 'default'} type=$requestedType',
     );
@@ -82,9 +81,6 @@ class GraphController extends GetxController {
       debugPrint('Graph loading error: $e');
     } finally {
       isLoading.value = false;
-      if (EasyLoading.isShow) {
-        EasyLoading.dismiss();
-      }
     }
   }
 
