@@ -89,66 +89,77 @@ class _LoggedInDashboard extends StatelessWidget {
       final live = controller.liveData.value;
       final dynamicMetrics = live?.metrics ?? const <PoultrySensorMetric>[];
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header illustration under the Poultry Pulse app bar.
-              // (Removed header illustration as requested.)
-              const SizedBox(height: 10),
-              _DeviceDropdown(controller: controller),
-              const SizedBox(height: 10),
-              if (live != null)
-                _DeviceHeader(
-                  deviceName: live.deviceId,
-                  deviceStatus: live.deviceStatus,
-                  timestampIso: live.timestamp,
+      return RefreshIndicator(
+        onRefresh: () async {
+          final refresh = controller.refreshLiveData();
+          // Ensure refresh completes in max 2 seconds
+          await Future.any([
+            refresh,
+            Future.delayed(const Duration(seconds: 2)),
+          ]);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header illustration under the Poultry Pulse app bar.
+                // (Removed header illustration as requested.)
+                const SizedBox(height: 10),
+                _DeviceDropdown(controller: controller),
+                const SizedBox(height: 10),
+                if (live != null)
+                  _DeviceHeader(
+                    deviceName: live.deviceId,
+                    deviceStatus: live.deviceStatus,
+                    timestampIso: live.timestamp,
+                  ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: dynamicMetrics
+                      .map(
+                        (metric) => _MetricCard(
+                          onTap: () => controller.openSensorGraph(metric),
+                          iconAsset: _metricIconAsset(metric.name),
+                          iconData: _dynamicMetricIcon(metric.name),
+                          title: metric.title,
+                          value: _formatDynamicMetricValue(metric),
+                          statusColor: _metricTextColor(metric.dangerStatus),
+                        ),
+                      )
+                      .toList(),
                 ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: dynamicMetrics
-                    .map(
-                      (metric) => _MetricCard(
-                        onTap: () => controller.openSensorGraph(metric),
-                        iconAsset: _metricIconAsset(metric.name),
-                        iconData: _dynamicMetricIcon(metric.name),
-                        title: metric.title,
-                        value: _formatDynamicMetricValue(metric),
-                        statusColor: _metricTextColor(metric.dangerStatus),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 14),
-              _SwitchesSection(controller: controller, live: live),
-              const SizedBox(height: 14),
-              // Temporary note until Poultry Pulse devices/backend are connected.
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
+                const SizedBox(height: 14),
+                _SwitchesSection(controller: controller, live: live),
+                const SizedBox(height: 14),
+                // Temporary note until Poultry Pulse devices/backend are connected.
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffdbcc68),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Note: The parameters are changeable according to installation of device.',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-                decoration: BoxDecoration(
-                  color: const Color(0xffdbcc68),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Note: The parameters are changeable according to installation of device.',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 10),
-              if (controller.error.value.isNotEmpty)
-                Text(
-                  'Last error: ${controller.error.value}',
-                  style: const TextStyle(color: Colors.redAccent),
-                ),
-            ],
+                const SizedBox(height: 10),
+                if (controller.error.value.isNotEmpty)
+                  Text(
+                    'Last error: ${controller.error.value}',
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+              ],
+            ),
           ),
         ),
       );

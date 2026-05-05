@@ -82,99 +82,110 @@ class _LoggedInDashboard extends StatelessWidget {
 
       final live = controller.liveData.value;
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header illustration under the Cattle Care app bar.
-              // (Removed header illustration as requested.)
-              const SizedBox(height: 10),
-              _DeviceDropdown(controller: controller),
-              const SizedBox(height: 10),
-              if (live != null)
-                _DeviceHeader(
-                  deviceName: live.deviceId,
-                  timestampIso: live.timestamp,
+      return RefreshIndicator(
+        onRefresh: () async {
+          final refresh = controller.refreshLiveData();
+          // Ensure refresh completes in max 2 seconds
+          await Future.any([
+            refresh,
+            Future.delayed(const Duration(seconds: 2)),
+          ]);
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header illustration under the Cattle Care app bar.
+                // (Removed header illustration as requested.)
+                const SizedBox(height: 10),
+                _DeviceDropdown(controller: controller),
+                const SizedBox(height: 10),
+                if (live != null)
+                  _DeviceHeader(
+                    deviceName: live.deviceId,
+                    timestampIso: live.timestamp,
+                  ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_nh3.png',
+                      title: 'NH3',
+                      value: live == null
+                          ? '--'
+                          : '${live.nh3MgL.toStringAsFixed(2)} mg/L',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_temperature.png',
+                      title: 'Temperature',
+                      value: live == null
+                          ? '--'
+                          : '${live.temperatureC.toStringAsFixed(2)} °C',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_humidity.png',
+                      title: 'Humidity',
+                      value: live == null ? '--' : '${live.humidityPct} %',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_voc.png',
+                      title: 'Volatile Organic Compounds(VOCs)',
+                      value: live == null
+                          ? '--'
+                          : '${live.vocMgM3.toStringAsFixed(2)} mg/m³',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_co2.png',
+                      title: 'Carbon dioxide',
+                      value: live == null ? '--' : '${live.co2Ppm} ppm',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_pm25.png',
+                      title: 'PM 2.5',
+                      value: live == null ? '--' : '${live.pm25UgM3} µg/m³',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_pm10.png',
+                      title: 'PM 10',
+                      value: live == null ? '--' : '${live.pm10UgM3} µg/m³',
+                    ),
+                    _MetricCard(
+                      iconAsset: 'assets/icons/cattle_noise.png',
+                      title: 'Noise level',
+                      value: live == null ? '--' : '${live.noiseDb} dB',
+                    ),
+                  ],
                 ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: [
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_nh3.png',
-                    title: 'NH3',
-                    value: live == null
-                        ? '--'
-                        : '${live.nh3MgL.toStringAsFixed(2)} mg/L',
+                const SizedBox(height: 14),
+                // Temporary note until Cattle Care devices/backend are connected.
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
                   ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_temperature.png',
-                    title: 'Temperature',
-                    value: live == null
-                        ? '--'
-                        : '${live.temperatureC.toStringAsFixed(2)} °C',
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 255, 254, 254),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_humidity.png',
-                    title: 'Humidity',
-                    value: live == null ? '--' : '${live.humidityPct} %',
+                  child: const Text(
+                    'Note: The parameters are changeable according to installation of device.',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
                   ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_voc.png',
-                    title: 'Volatile Organic Compounds(VOCs)',
-                    value: live == null
-                        ? '--'
-                        : '${live.vocMgM3.toStringAsFixed(2)} mg/m³',
-                  ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_co2.png',
-                    title: 'Carbon dioxide',
-                    value: live == null ? '--' : '${live.co2Ppm} ppm',
-                  ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_pm25.png',
-                    title: 'PM 2.5',
-                    value: live == null ? '--' : '${live.pm25UgM3} µg/m³',
-                  ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_pm10.png',
-                    title: 'PM 10',
-                    value: live == null ? '--' : '${live.pm10UgM3} µg/m³',
-                  ),
-                  _MetricCard(
-                    iconAsset: 'assets/icons/cattle_noise.png',
-                    title: 'Noise level',
-                    value: live == null ? '--' : '${live.noiseDb} dB',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              // Temporary note until Cattle Care devices/backend are connected.
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
                 ),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 254, 254),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Text(
-                  'Note: The parameters are changeable according to installation of device.',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 10),
-              if (controller.error.value.isNotEmpty)
-                Text(
-                  'Last error: ${controller.error.value}',
-                  style: const TextStyle(color: Colors.redAccent),
-                ),
-            ],
+                const SizedBox(height: 10),
+                if (controller.error.value.isNotEmpty)
+                  Text(
+                    'Last error: ${controller.error.value}',
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+              ],
+            ),
           ),
         ),
       );
