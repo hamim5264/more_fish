@@ -1541,47 +1541,87 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                                 true,
                                                           );
 
-                                                      return Opacity(
-                                                        opacity: isOnline
-                                                            ? 1.0
-                                                            : 0.45,
-                                                        child: Switch(
-                                                          key: ValueKey(
-                                                            aerator.aeratorPk,
-                                                          ),
-                                                          value: switchValue,
-                                                          onChanged:
-                                                              !isOnline ||
-                                                                  controller
-                                                                      .isAeratorBusy(
-                                                                        aerator
-                                                                            .aeratorPk,
-                                                                      )
-                                                              ? null
-                                                              : (bool value) {
-                                                                  // Send command to API
-                                                                  // (no optimistic update)
-                                                                  controller.aeratorCommand(
-                                                                    id: aerator
-                                                                        .aeratorId,
-                                                                    command:
-                                                                        value
-                                                                        ? 1
-                                                                        : 0,
-                                                                    index:
-                                                                        index,
-                                                                    isOnline:
-                                                                        isOnline,
-                                                                    aeratorPk:
-                                                                        aerator
-                                                                            .aeratorPk,
-                                                                  );
-                                                                },
-                                                          activeThumbColor:
-                                                              Colors.green,
-                                                          inactiveThumbColor:
-                                                              Colors.red,
+                                                      return Switch(
+                                                        key: ValueKey(
+                                                          aerator.aeratorPk,
                                                         ),
+                                                        value: switchValue,
+                                                        onChanged:
+                                                            !isOnline ||
+                                                                controller
+                                                                    .isAeratorBusy(
+                                                                      aerator
+                                                                          .aeratorPk,
+                                                                    )
+                                                            ? null
+                                                            : (bool value) {
+                                                                // Send command to API
+                                                                // (no optimistic update)
+                                                                controller.aeratorCommand(
+                                                                  id: aerator
+                                                                      .aeratorId,
+                                                                  command: value
+                                                                      ? 1
+                                                                      : 0,
+                                                                  index: index,
+                                                                  isOnline:
+                                                                      isOnline,
+                                                                  aeratorPk: aerator
+                                                                      .aeratorPk,
+                                                                );
+                                                              },
+                                                        thumbColor: MaterialStateProperty.resolveWith<Color>((
+                                                          states,
+                                                        ) {
+                                                          final isDisabled =
+                                                              states.contains(
+                                                                MaterialState
+                                                                    .disabled,
+                                                              );
+
+                                                          if (isDisabled) {
+                                                            return switchValue
+                                                                ? const Color(
+                                                                    0xff93b39f,
+                                                                  )
+                                                                : const Color(
+                                                                    0xffb59a97,
+                                                                  );
+                                                          }
+
+                                                          return switchValue
+                                                              ? Colors.green
+                                                              : Colors.red;
+                                                        }),
+                                                        trackColor: MaterialStateProperty.resolveWith<Color>((
+                                                          states,
+                                                        ) {
+                                                          final isDisabled =
+                                                              states.contains(
+                                                                MaterialState
+                                                                    .disabled,
+                                                              );
+
+                                                          if (isDisabled) {
+                                                            return switchValue
+                                                                ? const Color(
+                                                                    0xffc6d8cd,
+                                                                  )
+                                                                : const Color(
+                                                                    0xffdbc7c4,
+                                                                  );
+                                                          }
+
+                                                          return switchValue
+                                                              ? Colors.green
+                                                                    .withOpacity(
+                                                                      0.45,
+                                                                    )
+                                                              : Colors.red
+                                                                    .withOpacity(
+                                                                      0.45,
+                                                                    );
+                                                        }),
                                                       );
                                                     }),
                                                   ],
