@@ -1508,38 +1508,27 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                     return Switch(
                                                       value: controller
                                                           .aeratorSwitch[index],
-                                                      onChanged: (bool value) {
-                                                        if (controller
-                                                            .commandInProgress
-                                                            .value) {
-                                                          try {
-                                                            Get.snackbar(
-                                                              'Error',
-                                                              'Please wait...',
-                                                              snackPosition:
-                                                                  SnackPosition
-                                                                      .BOTTOM,
-                                                            );
-                                                          } catch (_) {}
-                                                          return;
-                                                        } //
-
-                                                        // Optimistic update
-                                                        controller
-                                                                .aeratorSwitch[index] =
-                                                            value;
-
-                                                        // Send command to API
-                                                        controller
-                                                            .aeratorCommand(
-                                                              id: aerator
-                                                                  .aeratorId,
-                                                              command: value
-                                                                  ? 1
-                                                                  : 0,
-                                                              index: index,
-                                                            );
-                                                      },
+                                                      onChanged:
+                                                          !isOnline ||
+                                                              controller
+                                                                  .commandInProgress
+                                                                  .value
+                                                          ? null
+                                                          : (bool value) {
+                                                              // Send command to API
+                                                              // (no optimistic update)
+                                                              controller
+                                                                  .aeratorCommand(
+                                                                    id: aerator
+                                                                        .aeratorId,
+                                                                    command:
+                                                                        value
+                                                                        ? 1
+                                                                        : 0,
+                                                                    index:
+                                                                        index,
+                                                                  );
+                                                            },
                                                       activeThumbColor:
                                                           Colors.green,
                                                       inactiveThumbColor:
