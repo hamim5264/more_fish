@@ -317,8 +317,6 @@ class PoultryLiveMonitoringController extends GetxController
     final storage = Get.find<LoginTokenStorage>();
     final prefs = storage.sharedPreferences;
     final payload = Map<String, dynamic>.from(data.toJson());
-    // Do not cache switch states.
-    payload.remove('switches');
     await prefs.setString(_cacheLiveDataKey, jsonEncode(payload));
   }
 
