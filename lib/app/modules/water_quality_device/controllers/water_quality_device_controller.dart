@@ -417,3 +417,4 @@ class WaterQualityDeviceController extends GetxController {
     );
   }
 }
+//
