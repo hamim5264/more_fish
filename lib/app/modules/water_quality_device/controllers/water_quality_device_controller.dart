@@ -45,11 +45,7 @@ class WaterQualityDeviceController extends GetxController {
   void onInit() {
     super.onInit();
     debugPrint('[WaterQuality] onInit -> pondList + companyList + polling');
-    _loadCachedState();
-    pondList();
-    CompanyList();
-    _startPolling();
-    _startAeratorPolling();
+    _bootstrap();
   }
 
   @override
@@ -78,6 +74,14 @@ class WaterQualityDeviceController extends GetxController {
       if (aeratorIds.isEmpty) return; // don't change UI shape after first fetch
       _pollAeratorState();
     });
+  }
+
+  Future<void> _bootstrap() async {
+    await _loadCachedState();
+    pondList();
+    CompanyList();
+    _startPolling();
+    _startAeratorPolling();
   }
 
   void _pollAeratorState() async {
@@ -147,30 +151,18 @@ class WaterQualityDeviceController extends GetxController {
         pondDataResponse.value = r;
         _cachePondData(r);
 
-        // Reset and populate aerator switches from fresh API data
+        // Populate aerator switches from fresh API data when the response
+        // actually includes aerators. If the response is partial or offline
+        // state is already cached, keep the previous switch snapshot.
         final aerators = r.data.devices[0].aerators;
-        if (_firstFetch) {
-          aeratorIds.clear();
-          aeratorSwitch.clear();
-          for (int i = 0; i < aerators.length; i++) {
-            aeratorIds.add(aerators[i].aeratorPk);
-            aeratorSwitch.add(aerators[i].isRunning);
-          }
-          // Cache discovered aerators so we remember them between app launches
+        if (aerators.isNotEmpty) {
+          _syncAeratorSwitchState(aerators);
+          // Cache discovered aerators so we remember them between app launches.
           _cacheAeratorListFromData(aerators);
         } else {
-          // After initial load we DO NOT change the number of switches in the UI.
-          // Only update the `is_running` state for known aerators. New aerators
-          // are cached but not added to the UI to avoid layout shifts.
-          for (int i = 0; i < aerators.length; i++) {
-            final pk = aerators[i].aeratorPk;
-            final idx = aeratorIds.indexOf(pk);
-            if (idx >= 0) {
-              aeratorSwitch[idx] = aerators[i].isRunning;
-            } else {
-              _cacheSingleAerator(pk, aerators[i].isRunning);
-            }
-          }
+          debugPrint(
+            '[Flow] Pond response returned no aerators; keeping cached switch state',
+          );
         }
 
         // Fetch sensor list for graph
@@ -245,7 +237,7 @@ class WaterQualityDeviceController extends GetxController {
       final cachedPondData = prefs.getString(_cachePondDataKey);
       if (cachedPondData != null && cachedPondData.isNotEmpty) {
         pondDataResponse.value = PondDataResponse.fromRawJson(cachedPondData);
-        aeratorSwitch.clear();
+        _syncAeratorSwitchStateFromCachedResponse(pondDataResponse.value!);
       }
 
       final cachedSensorList = prefs.getString(_cacheSensorListKey);
@@ -274,20 +266,22 @@ class WaterQualityDeviceController extends GetxController {
 
       // Load cached aerator states (if any). This populates the local arrays so
       // the UI can show cached switch states before the first full fetch.
-      final cachedAerator = prefs.getString(_cacheAeratorKey);
-      if (cachedAerator != null && cachedAerator.isNotEmpty) {
-        try {
-          final Map<String, dynamic> m = jsonDecode(cachedAerator);
-          aeratorIds.clear();
-          aeratorSwitch.clear();
-          m.forEach((k, v) {
-            final pk = int.tryParse(k) ?? 0;
-            if (pk != 0) {
-              aeratorIds.add(pk);
-              aeratorSwitch.add(v == true);
-            }
-          });
-        } catch (_) {}
+      if (aeratorIds.isEmpty || aeratorSwitch.isEmpty) {
+        final cachedAerator = prefs.getString(_cacheAeratorKey);
+        if (cachedAerator != null && cachedAerator.isNotEmpty) {
+          try {
+            final Map<String, dynamic> m = jsonDecode(cachedAerator);
+            aeratorIds.clear();
+            aeratorSwitch.clear();
+            m.forEach((k, v) {
+              final pk = int.tryParse(k) ?? 0;
+              if (pk != 0) {
+                aeratorIds.add(pk);
+                aeratorSwitch.add(v == true);
+              }
+            });
+          } catch (_) {}
+        }
       }
     } catch (_) {}
   }
@@ -299,7 +293,36 @@ class WaterQualityDeviceController extends GetxController {
 
   Future<void> _cachePondData(PondDataResponse response) async {
     final prefs = await SharedPreferences.getInstance();
-    final payload = _stripAerators(response);
+    final payload = response.toJson();
+    final data = payload['data'];
+    if (data is Map<String, dynamic>) {
+      final devices = data['devices'];
+      if (devices is List && devices.isNotEmpty) {
+        final firstDevice = devices.first;
+        if (firstDevice is Map<String, dynamic>) {
+          final aerators = firstDevice['aerators'];
+          if (aerators is! List || aerators.isEmpty) {
+            final cached = prefs.getString(_cachePondDataKey);
+            if (cached != null && cached.isNotEmpty) {
+              try {
+                final previous = Map<String, dynamic>.from(jsonDecode(cached));
+                final previousData = previous['data'];
+                if (previousData is Map<String, dynamic>) {
+                  final previousDevices = previousData['devices'];
+                  if (previousDevices is List && previousDevices.isNotEmpty) {
+                    final previousFirstDevice = previousDevices.first;
+                    if (previousFirstDevice is Map<String, dynamic> &&
+                        previousFirstDevice['aerators'] is List) {
+                      firstDevice['aerators'] = previousFirstDevice['aerators'];
+                    }
+                  }
+                }
+              } catch (_) {}
+            }
+          }
+        }
+      }
+    }
     await prefs.setString(_cachePondDataKey, jsonEncode(payload));
   }
 
@@ -352,20 +375,43 @@ class WaterQualityDeviceController extends GetxController {
     await prefs.setString(_cacheSelectedAstNameKey, name.trim());
   }
 
-  Map<String, dynamic> _stripAerators(PondDataResponse response) {
-    final payload = response.toJson();
-    final data = payload['data'];
-    if (data is Map<String, dynamic>) {
-      final devices = data['devices'];
-      if (devices is List) {
-        for (final device in devices) {
-          if (device is Map<String, dynamic>) {
-            device['aerators'] = <dynamic>[];
-          }
-        }
+  void _syncAeratorSwitchStateFromCachedResponse(PondDataResponse response) {
+    final aerators = _extractAerators(response);
+    if (aerators.isNotEmpty) {
+      _syncAeratorSwitchState(aerators);
+    }
+  }
+
+  List<Aerator> _extractAerators(PondDataResponse response) {
+    try {
+      if (response.data.devices.isEmpty) return const <Aerator>[];
+      return response.data.devices.first.aerators;
+    } catch (_) {
+      return const <Aerator>[];
+    }
+  }
+
+  void _syncAeratorSwitchState(List<Aerator> aerators) {
+    if (aerators.isEmpty) return;
+
+    if (aeratorIds.isEmpty || aeratorSwitch.isEmpty) {
+      aeratorIds
+        ..clear()
+        ..addAll(aerators.map((a) => a.aeratorPk));
+      aeratorSwitch
+        ..clear()
+        ..addAll(aerators.map((a) => a.isRunning));
+      return;
+    }
+
+    for (final aerator in aerators) {
+      final idx = aeratorIds.indexOf(aerator.aeratorPk);
+      if (idx >= 0 && idx < aeratorSwitch.length) {
+        aeratorSwitch[idx] = aerator.isRunning;
+      } else {
+        _cacheSingleAerator(aerator.aeratorPk, aerator.isRunning);
       }
     }
-    return payload;
   }
 
   // ==================== UPDATED AERATOR COMMAND ====================
