@@ -1522,7 +1522,7 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                             );
                                                           } catch (_) {}
                                                           return;
-                                                        }
+                                                        } //
 
                                                         // Optimistic update
                                                         controller
