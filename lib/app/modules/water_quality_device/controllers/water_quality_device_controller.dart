@@ -28,6 +28,7 @@ class WaterQualityDeviceController extends GetxController {
   Timer? _aeratorPollTimer;
   var isFetching = false.obs;
   var commandInProgress = false.obs;
+  var busyAeratorPks = <int>{}.obs;
   bool _firstFetch = true;
 
   var aeratorIds = <int>[].obs;
@@ -414,11 +415,42 @@ class WaterQualityDeviceController extends GetxController {
     }
   }
 
-  // ==================== UPDATED AERATOR COMMAND ====================
-  aeratorCommand({id, command, int? index}) async {
-    if (commandInProgress.value) return;
+  bool aeratorSwitchValueFor(int aeratorPk, {bool fallback = false}) {
+    final idx = aeratorIds.indexOf(aeratorPk);
+    if (idx >= 0 && idx < aeratorSwitch.length) {
+      return aeratorSwitch[idx] == true;
+    }
+    return fallback;
+  }
 
-    commandInProgress.value = true;
+  bool isAeratorBusy(int aeratorPk) => busyAeratorPks.contains(aeratorPk);
+
+  // ==================== UPDATED AERATOR COMMAND ====================
+  aeratorCommand({
+    id,
+    command,
+    int? index,
+    bool? isOnline,
+    int? aeratorPk,
+  }) async {
+    if (isOnline == false) {
+      try {
+        Get.snackbar(
+          'Error',
+          'This aerator is offline',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } catch (_) {}
+      return;
+    }
+
+    final pk = aeratorPk;
+    if (pk != null && busyAeratorPks.contains(pk)) return;
+
+    if (pk != null) {
+      busyAeratorPks.add(pk);
+      commandInProgress.value = true;
+    }
 
     // loader removed
 
@@ -441,7 +473,12 @@ class WaterQualityDeviceController extends GetxController {
         } catch (_) {}
 
         // No optimistic update, so no need to revert switch
-        commandInProgress.value = false;
+        if (pk != null) {
+          busyAeratorPks.remove(pk);
+          commandInProgress.value = busyAeratorPks.isNotEmpty;
+        } else {
+          commandInProgress.value = false;
+        }
       },
       (r) {
         // Success case
@@ -458,7 +495,12 @@ class WaterQualityDeviceController extends GetxController {
 
         // Refresh pond data to get latest is_running state from server
         pondData(id: selectedAstId.value);
-        commandInProgress.value = false;
+        if (pk != null) {
+          busyAeratorPks.remove(pk);
+          commandInProgress.value = busyAeratorPks.isNotEmpty;
+        } else {
+          commandInProgress.value = false;
+        }
       },
     );
   }

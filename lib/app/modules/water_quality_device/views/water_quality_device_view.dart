@@ -1004,7 +1004,7 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
           },
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               Obx(() {
                 return CommonAppBar(
                   title: 'title'.tr,
@@ -1531,34 +1531,57 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                       ],
                                                     ),
                                                     Obx(() {
-                                                      return Switch(
-                                                        value: controller
-                                                            .aeratorSwitch[index],
-                                                        onChanged:
-                                                            !isOnline ||
-                                                                controller
-                                                                    .commandInProgress
-                                                                    .value
-                                                            ? null
-                                                            : (bool value) {
-                                                                // Send command to API
-                                                                // (no optimistic update)
-                                                                controller
-                                                                    .aeratorCommand(
-                                                                      id: aerator
-                                                                          .aeratorId,
-                                                                      command:
-                                                                          value
-                                                                          ? 1
-                                                                          : 0,
-                                                                      index:
-                                                                          index,
-                                                                    );
-                                                              },
-                                                        activeThumbColor:
-                                                            Colors.green,
-                                                        inactiveThumbColor:
-                                                            Colors.red,
+                                                      final bool
+                                                      switchValue = controller
+                                                          .aeratorSwitchValueFor(
+                                                            aerator.aeratorPk,
+                                                            fallback:
+                                                                aerator
+                                                                    .isRunning ==
+                                                                true,
+                                                          );
+
+                                                      return Opacity(
+                                                        opacity: isOnline
+                                                            ? 1.0
+                                                            : 0.45,
+                                                        child: Switch(
+                                                          key: ValueKey(
+                                                            aerator.aeratorPk,
+                                                          ),
+                                                          value: switchValue,
+                                                          onChanged:
+                                                              !isOnline ||
+                                                                  controller
+                                                                      .isAeratorBusy(
+                                                                        aerator
+                                                                            .aeratorPk,
+                                                                      )
+                                                              ? null
+                                                              : (bool value) {
+                                                                  // Send command to API
+                                                                  // (no optimistic update)
+                                                                  controller.aeratorCommand(
+                                                                    id: aerator
+                                                                        .aeratorId,
+                                                                    command:
+                                                                        value
+                                                                        ? 1
+                                                                        : 0,
+                                                                    index:
+                                                                        index,
+                                                                    isOnline:
+                                                                        isOnline,
+                                                                    aeratorPk:
+                                                                        aerator
+                                                                            .aeratorPk,
+                                                                  );
+                                                                },
+                                                          activeThumbColor:
+                                                              Colors.green,
+                                                          inactiveThumbColor:
+                                                              Colors.red,
+                                                        ),
                                                       );
                                                     }),
                                                   ],
