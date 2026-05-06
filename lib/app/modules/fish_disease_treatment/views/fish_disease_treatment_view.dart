@@ -16,59 +16,70 @@ class FishDiseaseTreatmentView extends GetView<FishDiseaseTreatmentController> {
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
     return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Color(0xffd4fcfd),
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.dark,
-        ),
-        child:SafeArea(
-            child: Scaffold(
-      backgroundColor: AppColors.backGround,
-      body: Column(
-        children: [
-          Obx((){
-            return CommonAppBar(
-              title: 'title'.tr,
-              cityName: "dhaka".tr,
-              date: '${homeController.formattedDate}',
-              time: '${homeController.formattedTime}',
-              temp: '${homeController.weatherData['main']['temp']}°C',
-              humidity: '${homeController.weatherData['main']['humidity']}%',
-            );
-          }),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              itemCount: controller.titleList.length,
-              itemBuilder: (context, index){
-                return InkWell(
-                  onTap: (){
-                    Get.toNamed(Routes.FISH_DISEASE_TREATMENT_DETAILS, arguments: {"diseaseName": controller.titleList[index], "data": controller.dataList[index]});
-                  },
-                  child: CommonContainer(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                    margin: const EdgeInsetsGeometry.only(left: 16, right: 16,  bottom: 14),
-                    child: CommonText(
-                      "${controller.titleList[index]}",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: Colors.black,
-                      textAlign: TextAlign.center,
-
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Color(0xffd4fcfd),
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.backGround,
+        body: Column(
+          children: [
+            SizedBox(height: 20),
+            Obx(() {
+              return CommonAppBar(
+                title: 'title'.tr,
+                cityName: "dhaka".tr,
+                date: '${homeController.formattedDate}',
+                time: '${homeController.formattedTime}',
+                temp: '${homeController.weatherData['main']['temp']}°C',
+                humidity: '${homeController.weatherData['main']['humidity']}%',
+              );
+            }),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                itemCount: controller.titleList.length,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      Get.toNamed(
+                        Routes.FISH_DISEASE_TREATMENT_DETAILS,
+                        arguments: {
+                          "diseaseName": controller.titleList[index],
+                          "data": controller.dataList[index],
+                        },
+                      );
+                    },
+                    child: CommonContainer(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 16,
+                      ),
+                      margin: const EdgeInsetsGeometry.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 14,
+                      ),
+                      child: CommonText(
+                        "${controller.titleList[index]}",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.black,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-      ),
+          ],
+        ),
       ),
     );
   }
 
-  title({text}){
+  title({text}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -86,7 +97,7 @@ class FishDiseaseTreatmentView extends GetView<FishDiseaseTreatmentController> {
     );
   }
 
-  section({text}){
+  section({text}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 2),
       child: Row(
@@ -104,7 +115,7 @@ class FishDiseaseTreatmentView extends GetView<FishDiseaseTreatmentController> {
     );
   }
 
-  section2({text}){
+  section2({text}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 2),
       child: Row(
@@ -122,7 +133,7 @@ class FishDiseaseTreatmentView extends GetView<FishDiseaseTreatmentController> {
     );
   }
 
-  subSection({text}){
+  subSection({text}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 2),
       child: Row(
@@ -153,29 +164,27 @@ class FishDiseaseTreatmentView extends GetView<FishDiseaseTreatmentController> {
     );
   }
 
-  boxDecoration(){
+  boxDecoration() {
     return BoxDecoration(
       gradient: const LinearGradient(
         colors: [
           Color(0xffebffff), // Start color
-          Colors.white,      // End color
+          Colors.white, // End color
         ],
-        begin: Alignment.topLeft,   // Gradient start position
+        begin: Alignment.topLeft, // Gradient start position
         end: Alignment.bottomRight, // Gradient end position
       ),
       borderRadius: BorderRadius.circular(10),
       boxShadow: [
         BoxShadow(
-          color: Colors.blueGrey.withOpacity(0.5),  // Shadow color with opacity
-          spreadRadius: 1,   // How much the shadow spreads
-          blurRadius: 1,     // How blurry the shadow is
+          color: Colors.blueGrey.withOpacity(0.5), // Shadow color with opacity
+          spreadRadius: 1, // How much the shadow spreads
+          blurRadius: 1, // How blurry the shadow is
           offset: const Offset(.2, .2), // Position of shadow: (x, y)
         ),
       ],
     );
   }
-
-
 }
 
 

@@ -16,43 +16,55 @@ class PondManagementView extends GetView<PondManagementController> {
     HomeController homeController = Get.put(HomeController());
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: const SystemUiOverlayStyle(
-          statusBarColor: Color(0xffd4fcfd),
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.dark,
-        ),
-        child:SafeArea(
-            child: Scaffold(
-      backgroundColor: AppColors.backGround,
-      body: Column(
-        children: [
-          Obx((){
-            return CommonAppBar(
-              title: 'title'.tr,
-              cityName: "dhaka".tr,
-              date: '${homeController.formattedDate}',
-              time: '${homeController.formattedTime}',
-              temp: '${homeController.weatherData['main']['temp']}°C',
-              humidity: '${homeController.weatherData['main']['humidity']}%',
-            );
-          }),
-          Expanded(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Color(0xffd4fcfd),
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.backGround,
+        body: Column(
+          children: [
+            SizedBox(height: 20),
+            Obx(() {
+              return CommonAppBar(
+                title: 'title'.tr,
+                cityName: "dhaka".tr,
+                date: '${homeController.formattedDate}',
+                time: '${homeController.formattedTime}',
+                temp: '${homeController.weatherData['main']['temp']}°C',
+                humidity: '${homeController.weatherData['main']['humidity']}%',
+              );
+            }),
+            Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 16),
                 itemCount: controller.titleList.length,
-                itemBuilder: (context, index){
+                itemBuilder: (context, index) {
                   return InkWell(
-                    onTap: (){
-                      if(index == 0){
-                        Get.toNamed(Routes.POND_MANAGEMENT_TABLE,);
-                      }else{
-                        Get.toNamed(Routes.POND_MANAGEMENT_DETAILS, arguments: {"title": controller.titleList[index].tr, "data":controller.dataList[index],});
+                    onTap: () {
+                      if (index == 0) {
+                        Get.toNamed(Routes.POND_MANAGEMENT_TABLE);
+                      } else {
+                        Get.toNamed(
+                          Routes.POND_MANAGEMENT_DETAILS,
+                          arguments: {
+                            "title": controller.titleList[index].tr,
+                            "data": controller.dataList[index],
+                          },
+                        );
                       }
-
                     },
                     child: CommonContainer(
-                      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 14),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                        bottom: 14,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
                       child: Column(
                         children: [
                           Row(
@@ -64,28 +76,20 @@ class PondManagementView extends GetView<PondManagementController> {
                                   fontSize: 18,
                                   maxLines: 3,
                                   textAlign: TextAlign.center,
-
                                 ),
                               ),
                             ],
                           ),
-
                         ],
                       ),
                     ),
                   );
                 },
-              )
-          ),
-        ],
-      ),
-      ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
-
-  
-
 }
-
-
