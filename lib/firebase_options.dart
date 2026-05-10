@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,20 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAEEAoB-XGwzg-cWhsB97IWeb3r5f69pKI',
-    appId: '1:1059690091021:web:941d08a3a8fce316c63b44',
-    messagingSenderId: '1059690091021',
-    projectId: 'dma-technologies-98ce2',
-    authDomain: 'dma-technologies-98ce2.firebaseapp.com',
-    storageBucket: 'dma-technologies-98ce2.firebasestorage.app',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAT8SwqTV62rVwBPZ7YN4tpq1ryvjFsWVk',
-    appId: '1:1059690091021:android:9772d6ebef3181d9c63b44',
-    messagingSenderId: '1059690091021',
-    projectId: 'dma-technologies-98ce2',
-    storageBucket: 'dma-technologies-98ce2.firebasestorage.app',
+    apiKey: 'AIzaSyBTO4K6k0p6vBGq0qWwVux71sOHJ5yucGg',
+    appId: '1:1026525000107:android:549c385f8639060681e2ee',
+    messagingSenderId: '1026525000107',
+    projectId: 'morefish-2026',
+    storageBucket: 'morefish-2026.firebasestorage.app',
   );
 }

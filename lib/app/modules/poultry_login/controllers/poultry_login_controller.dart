@@ -5,6 +5,7 @@ import '../../../repo/auth.dart';
 import '../../../response/login_response.dart';
 import '../../../routes/app_pages.dart';
 import '../../../service/local_storage.dart';
+import '../../../service/fcm_service.dart';
 
 class PoultryLoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -88,6 +89,15 @@ class PoultryLoginController extends GetxController {
 
           await loginTokenStorage.setPoultryToken(token);
           await loginTokenStorage.setPoultryUserId(userId);
+
+          // Update FCM token after successful login
+          final fcmToken = await FcmService.getFcmToken();
+          if (fcmToken != null) {
+            await authRepository.updateFcmToken(
+              fcmToken: fcmToken,
+              isPoultryFlow: true,
+            );
+          }
 
           if (_openedFromGuard) {
             Get.back(result: true);

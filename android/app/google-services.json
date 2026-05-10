@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1059690091021",
-    "project_id": "dma-technologies-98ce2",
-    "storage_bucket": "dma-technologies-98ce2.firebasestorage.app"
+    "project_number": "1026525000107",
+    "project_id": "morefish-2026",
+    "storage_bucket": "morefish-2026.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1059690091021:android:9772d6ebef3181d9c63b44",
+        "mobilesdk_app_id": "1:1026525000107:android:549c385f8639060681e2ee",
         "android_client_info": {
           "package_name": "com.dmatechnologies.more_fish"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAT8SwqTV62rVwBPZ7YN4tpq1ryvjFsWVk"
+          "current_key": "AIzaSyBTO4K6k0p6vBGq0qWwVux71sOHJ5yucGg"
         }
       ],
       "services": {
