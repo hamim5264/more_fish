@@ -10,6 +10,7 @@ abstract class Routes {
   static const POULTRY_INDEX = _Paths.POULTRY_INDEX;
   static const CATTLE_INDEX = _Paths.CATTLE_INDEX;
   static const CLEAN_AIR_INDEX = _Paths.CLEAN_AIR_INDEX;
+  static const CLEAN_AIR_LIVE_MONITORING = _Paths.CLEAN_AIR_LIVE_MONITORING;
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const NOTIFICATIONS = _Paths.NOTIFICATIONS;
   static const PROFILE = _Paths.PROFILE;
@@ -64,6 +65,7 @@ abstract class _Paths {
   static const POULTRY_INDEX = '/poultry-index';
   static const CATTLE_INDEX = '/cattle-index';
   static const CLEAN_AIR_INDEX = '/clean-air-index';
+  static const CLEAN_AIR_LIVE_MONITORING = '/clean-air-live-monitoring';
   static const SPLASH_SCREEN = '/splash-screen';
   static const NOTIFICATIONS = '/notifications';
   static const PROFILE = '/profile';

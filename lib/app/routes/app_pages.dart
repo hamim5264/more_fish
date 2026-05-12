@@ -51,7 +51,9 @@ import '../modules/poultry_index/views/poultry_index_view.dart';
 import '../modules/cattle_index/bindings/cattle_index_binding.dart';
 import '../modules/cattle_index/views/cattle_index_view.dart';
 import '../modules/clean_air_index/bindings/clean_air_index_binding.dart';
+import '../modules/clean_air_index/bindings/clean_air_live_monitoring_binding.dart';
 import '../modules/clean_air_index/views/clean_air_index_view.dart';
+import '../modules/clean_air_index/views/clean_air_live_monitoring_view.dart';
 import '../modules/internet_checker/bindings/internet_checker_binding.dart';
 import '../modules/internet_checker/views/internet_checker_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -141,6 +143,11 @@ class AppPages {
       name: _Paths.CLEAN_AIR_INDEX,
       page: () => const CleanAirIndexView(),
       binding: CleanAirIndexBinding(),
+    ),
+    GetPage(
+      name: _Paths.CLEAN_AIR_LIVE_MONITORING,
+      page: () => const CleanAirLiveMonitoringView(),
+      binding: CleanAirLiveMonitoringBinding(),
     ),
     GetPage(
       name: _Paths.SPLASH_SCREEN,

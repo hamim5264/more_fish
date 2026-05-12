@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../common_widgets/common_app_bar.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/clean_air_header_controller.dart';
 import '../controllers/clean_air_index_controller.dart';
-import 'clean_air_live_monitoring_view.dart';
 
 class CleanAirHomeView extends GetView<CleanAirIndexController> {
   const CleanAirHomeView({super.key});
@@ -51,7 +51,7 @@ class CleanAirHomeView extends GetView<CleanAirIndexController> {
                         if (!canOpen) {
                           return;
                         }
-                        Get.to(() => const CleanAirLiveMonitoringView());
+                        Get.toNamed(Routes.CLEAN_AIR_LIVE_MONITORING);
                       },
                     ),
                   ),
