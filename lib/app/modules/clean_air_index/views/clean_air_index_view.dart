@@ -29,7 +29,8 @@ class CleanAirIndexView extends GetView<CleanAirIndexController> {
           currentIndex: controller.selectedIndex.value,
           onTap: (index) {
             // Same login gating behavior as Cattle Care / More Fish
-            if ((index == 1 || index == 2) && controller.isLoggedIn.isEmpty) {
+            if ((index == 1 || index == 2) &&
+                controller.isLoggedIn.value.isEmpty) {
               showDialog(
                 context: context,
                 barrierDismissible: true,
@@ -40,7 +41,7 @@ class CleanAirIndexView extends GetView<CleanAirIndexController> {
                       Get.back();
                       controller.selectedIndex.value = 0;
                     },
-                    login: () => Get.toNamed(Routes.LOGIN),
+                    login: () => Get.toNamed(Routes.PHARMA_LOGIN),
                   ),
                 ),
               );
@@ -54,22 +55,13 @@ class CleanAirIndexView extends GetView<CleanAirIndexController> {
           elevation: 4,
           selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
           items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
             BottomNavigationBarItem(
               icon: Icon(Icons.notifications),
               label: 'Notifications',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu),
-              label: 'More',
-            ),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            BottomNavigationBarItem(icon: Icon(Icons.menu), label: 'More'),
           ],
         ),
       );

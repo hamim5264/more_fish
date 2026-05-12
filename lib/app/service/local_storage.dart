@@ -5,8 +5,10 @@ class LoginTokenStorage {
 
   final SharedPreferences sharedPreferences;
   static const _moreFishTokenKey = 'token';
+  static const _pharmaTokenKey = 'pharmaToken';
   static const _poultryTokenKey = 'poultryToken';
   static const _moreFishUserIdKey = 'userId';
+  static const _pharmaUserIdKey = 'pharmaUserId';
   static const _poultryUserIdKey = 'poultryUserId';
 
   String? getToken() {
@@ -33,6 +35,18 @@ class LoginTokenStorage {
     await sharedPreferences.remove(_moreFishTokenKey);
   }
 
+  String? getPharmaToken() {
+    return _normalizedToken(sharedPreferences.getString(_pharmaTokenKey));
+  }
+
+  Future<void> setPharmaToken(String value) async {
+    await sharedPreferences.setString(_pharmaTokenKey, value.trim());
+  }
+
+  Future<void> removePharmaToken() async {
+    await sharedPreferences.remove(_pharmaTokenKey);
+  }
+
   String? getPoultryToken() {
     return _normalizedToken(sharedPreferences.getString(_poultryTokenKey));
   }
@@ -47,6 +61,7 @@ class LoginTokenStorage {
 
   Future<void> removeAllTokens() async {
     await removeMoreFishToken();
+    await removePharmaToken();
     await removePoultryToken();
   }
 
@@ -74,6 +89,18 @@ class LoginTokenStorage {
     await sharedPreferences.remove(_moreFishUserIdKey);
   }
 
+  int? getPharmaUserId() {
+    return sharedPreferences.getInt(_pharmaUserIdKey);
+  }
+
+  Future<void> setPharmaUserId(int value) async {
+    await sharedPreferences.setInt(_pharmaUserIdKey, value);
+  }
+
+  Future<void> removePharmaUserId() async {
+    await sharedPreferences.remove(_pharmaUserIdKey);
+  }
+
   int? getPoultryUserId() {
     return sharedPreferences.getInt(_poultryUserIdKey);
   }
@@ -92,6 +119,15 @@ class LoginTokenStorage {
 
   bool hasValidMoreFishToken() {
     final token = getMoreFishToken();
+    if (token == null) return false;
+    final normalized = token.trim().toLowerCase();
+    return normalized.isNotEmpty &&
+        normalized != 'null' &&
+        normalized != 'undefined';
+  }
+
+  bool hasValidPharmaToken() {
+    final token = getPharmaToken();
     if (token == null) return false;
     final normalized = token.trim().toLowerCase();
     return normalized.isNotEmpty &&

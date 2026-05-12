@@ -24,19 +24,24 @@ class CleanAirMoreView extends StatelessWidget {
           backgroundColor: const Color(0xffebffff),
           body: Column(
             children: [
-              Obx(() => CommonAppBar(
-                    title: 'Clean Air',
-                    cityName: 'Dhaka',
-                    date: header.formattedDate.value,
-                    time: header.formattedTime.value,
-                    temp: header.tempText.value,
-                    humidity: header.humidityText.value,
-                    logoAssetPath: 'assets/icons/clean_air.png',
-                    backgroundColor: const Color(0xffd4fcfd),
-                  )),
+              Obx(
+                () => CommonAppBar(
+                  title: 'Pharma Care',
+                  cityName: 'Dhaka',
+                  date: header.formattedDate.value,
+                  time: header.formattedTime.value,
+                  temp: header.tempText.value,
+                  humidity: header.humidityText.value,
+                  logoAssetPath: 'assets/icons/clean_air.png',
+                  backgroundColor: const Color(0xffd4fcfd),
+                ),
+              ),
               Expanded(
                 child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   children: [
                     _SimpleMoreTile(
                       title: 'FAQ',
@@ -64,10 +69,7 @@ class CleanAirMoreView extends StatelessWidget {
 }
 
 class _SimpleMoreTile extends StatelessWidget {
-  const _SimpleMoreTile({
-    required this.title,
-    required this.onTap,
-  });
+  const _SimpleMoreTile({required this.title, required this.onTap});
 
   final String title;
   final VoidCallback onTap;

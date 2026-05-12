@@ -56,6 +56,8 @@ import '../modules/internet_checker/bindings/internet_checker_binding.dart';
 import '../modules/internet_checker/views/internet_checker_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/pharma_login/bindings/pharma_login_binding.dart';
+import '../modules/pharma_login/views/pharma_login_view.dart';
 import '../modules/poultry_login/bindings/poultry_login_binding.dart';
 import '../modules/poultry_login/views/poultry_login_view.dart';
 import '../modules/more/bindings/more_binding.dart';
@@ -164,6 +166,11 @@ class AppPages {
       name: _Paths.LOGIN,
       page: () => const LoginView(),
       binding: LoginBinding(),
+    ),
+    GetPage(
+      name: _Paths.PHARMA_LOGIN,
+      page: () => const PharmaLoginView(),
+      binding: PharmaLoginBinding(),
     ),
     GetPage(
       name: _Paths.POULTRY_LOGIN,

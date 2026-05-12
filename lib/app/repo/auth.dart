@@ -92,9 +92,12 @@ class AuthRepository {
   Future<Either<Failure, PasswordChangeResponse>> changePassword({
     oldPassword,
     newPassword,
+    bool isPharmaFlow = false,
   }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = isPharmaFlow
+          ? loginTokenStorage.getPharmaToken()
+          : loginTokenStorage.getToken();
 
       var headers = {
         'Authorization': 'Bearer $token',
@@ -129,10 +132,16 @@ class AuthRepository {
     }
   }
 
-  Future<Either<Failure, ProfileResponse>> getProfile() async {
+  Future<Either<Failure, ProfileResponse>> getProfile({
+    bool isPharmaFlow = false,
+  }) async {
     try {
-      var token = await loginTokenStorage.getToken();
-      var id = await loginTokenStorage.getUserId();
+      var token = isPharmaFlow
+          ? loginTokenStorage.getPharmaToken()
+          : loginTokenStorage.getToken();
+      var id = isPharmaFlow
+          ? loginTokenStorage.getPharmaUserId()
+          : loginTokenStorage.getUserId();
 
       var headers = {
         'Authorization': 'Bearer $token',
@@ -286,6 +295,7 @@ class AuthRepository {
   Future<Either<Failure, void>> updateFcmToken({
     required String fcmToken,
     bool isPoultryFlow = false,
+    bool isPharmaFlow = false,
   }) async {
     try {
       final baseUrl = isPoultryFlow
@@ -294,6 +304,8 @@ class AuthRepository {
 
       final token = isPoultryFlow
           ? loginTokenStorage.getPoultryToken()
+          : isPharmaFlow
+          ? loginTokenStorage.getPharmaToken()
           : loginTokenStorage.getMoreFishToken();
 
       var headers = {
@@ -304,9 +316,7 @@ class AuthRepository {
       final response = await http.post(
         Uri.parse("$baseUrl/auth/user/fcm/token/update/"),
         headers: headers,
-        body: jsonEncode({
-          "fcm_token": fcmToken,
-        }),
+        body: jsonEncode({"fcm_token": fcmToken}),
       );
 
       debugPrint("FCM token update status code: ${response.statusCode}");

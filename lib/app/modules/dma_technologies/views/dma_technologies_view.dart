@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../routes/app_pages.dart';
 
-
 class DmaTechnologiesView extends StatelessWidget {
   const DmaTechnologiesView({super.key});
 
@@ -31,9 +30,9 @@ class DmaTechnologiesGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     const bg = Color(0xffebffff);
     const tileBg = Color(0xffd7f2ee);
-void openPoultry() {
-  Get.toNamed(Routes.POULTRY_INDEX);
-}
+    void openPoultry() {
+      Get.toNamed(Routes.POULTRY_INDEX);
+    }
 
     final tiles = <_DmaTileData>[
       _DmaTileData(
@@ -41,23 +40,20 @@ void openPoultry() {
         asset: 'assets/icons/dma_more_fish.png',
         onTap: () => Get.toNamed(Routes.INDEX),
       ),
-       _DmaTileData(
-  title: 'Poultry Care',
-  asset: 'assets/icons/dma_poultry_pulse.png',
-  onTap: openPoultry,
-),
+      _DmaTileData(
+        title: 'Poultry Care',
+        asset: 'assets/icons/dma_poultry_pulse.png',
+        onTap: openPoultry,
+      ),
       _DmaTileData(
         title: 'Cattle Care',
         asset: 'assets/icons/dma_cattle_care.png',
         onTap: () => Get.toNamed(Routes.CATTLE_INDEX),
       ),
       _DmaTileData(
-        title: 'Tex Care',
-        asset: 'assets/icons/dma_textile.png',
-        onTap: () => Get.toNamed(
-          Routes.COMING_SOON,
-          arguments: const {'title': 'Tex Care'},
-        ),
+        title: 'Pharma Care',
+        asset: 'assets/icons/dma_pharmaceutical.png',
+        onTap: () => Get.toNamed(Routes.CLEAN_AIR_INDEX),
       ),
       _DmaTileData(
         title: 'Food & Beverage Care',
@@ -68,13 +64,14 @@ void openPoultry() {
         ),
       ),
       _DmaTileData(
-        title: 'Pharma Care',
-        asset: 'assets/icons/dma_pharmaceutical.png',
+        title: 'Tex Care',
+        asset: 'assets/icons/dma_textile.png',
         onTap: () => Get.toNamed(
           Routes.COMING_SOON,
-          arguments: const {'title': 'Pharma Care'},
+          arguments: const {'title': 'Tex Care'},
         ),
       ),
+      //
       _DmaTileData(
         title: 'Air Care',
         asset: 'assets/icons/clean_air.png',

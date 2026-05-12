@@ -28,7 +28,7 @@ class CleanAirHomeView extends GetView<CleanAirIndexController> {
             children: [
               Obx(
                 () => CommonAppBar(
-                  title: 'Air Care',
+                  title: 'Pharma Care',
                   cityName: 'Dhaka',
                   date: header.formattedDate.value,
                   time: header.formattedTime.value,
@@ -46,7 +46,11 @@ class CleanAirHomeView extends GetView<CleanAirIndexController> {
                     child: _HomeFeatureTile(
                       title: 'Live Data Monitoring',
                       iconAssetPath: 'assets/icons/water_quality_check.png',
-                      onTap: () {
+                      onTap: () async {
+                        final canOpen = await controller.ensureLoggedIn();
+                        if (!canOpen) {
+                          return;
+                        }
                         Get.to(() => const CleanAirLiveMonitoringView());
                       },
                     ),

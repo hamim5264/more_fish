@@ -27,7 +27,7 @@ class CleanAirLiveMonitoringView extends StatelessWidget {
             children: [
               Obx(
                 () => CommonAppBar(
-                  title: 'Air Care',
+                  title: 'Pharma Care',
                   cityName: 'Dhaka',
                   date: header.formattedDate.value,
                   time: header.formattedTime.value,

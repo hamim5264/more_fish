@@ -23,8 +23,8 @@ class CleanAirNotificationsView extends StatelessWidget {
           backgroundColor: const Color(0xffebffff),
           body: Column(
             children: [
-              Obx(() => CommonAppBar(
-                    title: 'Clean Air',
+                Obx(() => CommonAppBar(
+                  title: 'Pharma Care',
                     cityName: 'Dhaka',
                     date: header.formattedDate.value,
                     time: header.formattedTime.value,
