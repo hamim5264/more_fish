@@ -97,7 +97,7 @@ class AuthRepository {
     try {
       var token = isPharmaFlow
           ? loginTokenStorage.getPharmaToken()
-          : loginTokenStorage.getToken();
+          : loginTokenStorage.getMoreFishToken();
 
       var headers = {
         'Authorization': 'Bearer $token',
@@ -138,10 +138,10 @@ class AuthRepository {
     try {
       var token = isPharmaFlow
           ? loginTokenStorage.getPharmaToken()
-          : loginTokenStorage.getToken();
+          : loginTokenStorage.getMoreFishToken();
       var id = isPharmaFlow
           ? loginTokenStorage.getPharmaUserId()
-          : loginTokenStorage.getUserId();
+          : loginTokenStorage.getMoreFishUserId();
 
       var headers = {
         'Authorization': 'Bearer $token',

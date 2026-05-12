@@ -17,10 +17,10 @@ class NotificationsRepository {
     try {
       final token = isPharmaFlow
           ? loginTokenStorage.getPharmaToken()
-          : loginTokenStorage.getToken();
+          : loginTokenStorage.getMoreFishToken();
       final id = isPharmaFlow
           ? loginTokenStorage.getPharmaUserId()
-          : loginTokenStorage.getUserId();
+          : loginTokenStorage.getMoreFishUserId();
 
       if (token == null || id == null) {
         return Left(Failure('Missing notification session'));

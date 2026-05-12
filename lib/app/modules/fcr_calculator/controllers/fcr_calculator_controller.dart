@@ -67,7 +67,7 @@ class FcrCalculatorController extends GetxController {
       return;
     }
 
-    final token = _loginTokenStorage.getToken();
+    final token = _loginTokenStorage.getMoreFishToken();
     if (token == null || token.isEmpty) {
       validationMessage.value = 'Missing authorization token.';
       fcrResult.value = null;

@@ -123,9 +123,7 @@ class ProfileView extends GetView<ProfileController> {
                                     child: InkWell(
                                       onTap: () async {
                                         await controller.loginTokenStorage
-                                            .removeToken();
-                                        await controller.loginTokenStorage
-                                            .removeUserId();
+                                            .clearMoreFishSession();
                                         controller.isLoggedIn.value = '';
                                         Get.offAllNamed(Routes.INDEX);
                                       },

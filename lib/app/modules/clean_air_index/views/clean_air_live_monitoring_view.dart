@@ -408,6 +408,7 @@ class CleanAirLiveMonitoringView
                                                   Get.toNamed(
                                                     Routes.GRAPH,
                                                     arguments: {
+                                                      'flow': 'pharma',
                                                       'comId': controller
                                                           .comId
                                                           .value,

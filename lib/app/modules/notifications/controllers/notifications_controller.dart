@@ -48,8 +48,8 @@ class NotificationsController extends GetxController {
 
   checkLogin() {
     loginTokenStorage = Get.find<LoginTokenStorage>();
-    final token = loginTokenStorage.getToken();
-    final id = loginTokenStorage.getUserId();
+    final token = loginTokenStorage.getMoreFishToken();
+    final id = loginTokenStorage.getMoreFishUserId();
     print(id);
     print(token);
     if (token != null) {

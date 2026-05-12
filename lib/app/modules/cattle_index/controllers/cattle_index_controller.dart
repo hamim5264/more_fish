@@ -13,8 +13,8 @@ class CattleIndexController extends GetxController {
 
   void checkLogin() {
     final loginTokenStorage = Get.find<LoginTokenStorage>();
-    if (loginTokenStorage.getToken() != null) {
-      isLoggedIn = loginTokenStorage.getToken()!;
+    if (loginTokenStorage.getMoreFishToken() != null) {
+      isLoggedIn = loginTokenStorage.getMoreFishToken()!;
     }
   }
 }

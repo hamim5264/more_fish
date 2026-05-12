@@ -33,14 +33,16 @@ class WaterQualityDeviceController extends GetxController {
 
   var aeratorIds = <int>[].obs;
 
-  static const String _cacheAeratorKey = 'morefish_aerator_cache';
+  String get cachePrefix => 'morefish';
 
-  static const String _cachePondListKey = 'morefish_pond_list_cache';
-  static const String _cachePondDataKey = 'morefish_pond_data_cache';
-  static const String _cacheSensorListKey = 'morefish_sensor_list_cache';
-  static const String _cacheCompanyListKey = 'morefish_company_list_cache';
-  static const String _cacheSelectedAstIdKey = 'morefish_selected_ast_id';
-  static const String _cacheSelectedAstNameKey = 'morefish_selected_ast_name';
+  String get _cacheAeratorKey => '${cachePrefix}_aerator_cache';
+
+  String get _cachePondListKey => '${cachePrefix}_pond_list_cache';
+  String get _cachePondDataKey => '${cachePrefix}_pond_data_cache';
+  String get _cacheSensorListKey => '${cachePrefix}_sensor_list_cache';
+  String get _cacheCompanyListKey => '${cachePrefix}_company_list_cache';
+  String get _cacheSelectedAstIdKey => '${cachePrefix}_selected_ast_id';
+  String get _cacheSelectedAstNameKey => '${cachePrefix}_selected_ast_name';
 
   @override
   void onInit() {

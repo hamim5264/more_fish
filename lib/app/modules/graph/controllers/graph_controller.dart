@@ -28,6 +28,7 @@ class GraphController extends GetxController {
   String sensorName = '';
   String sensorUnit = '';
   bool isPoultryFlow = false;
+  bool isPharmaFlow = false;
 
   var selectedPeriod = 'Daily'.obs;
 
@@ -92,7 +93,9 @@ class GraphController extends GetxController {
     }
 
     final map = Map<String, dynamic>.from(args);
-    isPoultryFlow = map['flow']?.toString().toLowerCase() == 'poultry';
+    final flow = map['flow']?.toString().toLowerCase();
+    isPoultryFlow = flow == 'poultry';
+    isPharmaFlow = flow == 'pharma';
 
     if (isPoultryFlow) {
       farmId = int.tryParse('${map['farmId']}');
@@ -100,6 +103,17 @@ class GraphController extends GetxController {
       sensorName = (map['sensorName'] ?? '').toString().trim();
       sensorUnit = (map['unit'] ?? '').toString().trim();
       type = (map['type'] ?? 'daily').toString().trim().toLowerCase();
+      return;
+    }
+
+    if (isPharmaFlow) {
+      comId = map['comId'] ?? map['companyId'] ?? 39;
+      assetId = map['assetId']?.toString() ?? map['assst_id']?.toString();
+      sensorId = map['sensorId']?.toString() ?? map['sensor_id']?.toString();
+      type = (map['type'] ?? 'daily')?.toString();
+      debugPrint(
+        'GraphController normalized pharma -> comId:$comId assetId:$assetId sensorId:$sensorId type:$type',
+      );
       return;
     }
 
@@ -130,6 +144,7 @@ class GraphController extends GetxController {
       assetId: assetId,
       sensorId: sensorId,
       type: type,
+      isPharmaFlow: isPharmaFlow,
     );
 
     response.fold(

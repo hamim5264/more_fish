@@ -41,7 +41,7 @@ class LoginController extends GetxController {
       return;
     }
 
-    if (loginTokenStorage.hasValidToken()) {
+    if (loginTokenStorage.hasValidMoreFishToken()) {
       debugPrint(
         'Guard login skipped: token already found in SharedPreferences.',
       );
@@ -89,10 +89,10 @@ class LoginController extends GetxController {
             return;
           }
 
-          await loginTokenStorage.setToken(token);
-          await loginTokenStorage.setUserId(userId);
+          await loginTokenStorage.setMoreFishToken(token);
+          await loginTokenStorage.setMoreFishUserId(userId);
           debugPrint(
-            'Saved token in SharedPreferences: ${loginTokenStorage.getToken() != null}',
+            'Saved token in SharedPreferences: ${loginTokenStorage.getMoreFishToken() != null}',
           );
 
           // Update FCM token after successful login

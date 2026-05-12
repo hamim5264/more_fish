@@ -17,9 +17,17 @@ import 'package:more_fish/app/service/local_storage.dart';
 class DevicesRepository {
   var loginTokenStorage = Get.find<LoginTokenStorage>();
 
-  Future<Either<Failure, PondListResponse>> getPondList() async {
+  String? _getToken({bool isPharmaFlow = false}) {
+    return isPharmaFlow
+        ? loginTokenStorage.getPharmaToken()
+        : loginTokenStorage.getMoreFishToken();
+  }
+
+  Future<Either<Failure, PondListResponse>> getPondList({
+    bool isPharmaFlow = false,
+  }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -49,9 +57,12 @@ class DevicesRepository {
     }
   }
 
-  Future<Either<Failure, PondDataResponse>> getPondData({id}) async {
+  Future<Either<Failure, PondDataResponse>> getPondData({
+    id,
+    bool isPharmaFlow = false,
+  }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -83,9 +94,10 @@ class DevicesRepository {
 
   Future<Either<Failure, SensorListResponse>> getSensorList({
     dynamic deviceId,
+    bool isPharmaFlow = false,
   }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -120,9 +132,11 @@ class DevicesRepository {
     }
   }
 
-  Future<Either<Failure, CompanyListResponse>> getCompanyList() async {
+  Future<Either<Failure, CompanyListResponse>> getCompanyList({
+    bool isPharmaFlow = false,
+  }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -156,9 +170,10 @@ class DevicesRepository {
   Future<Either<Failure, AeratorCommandResponse>> setAeratorCommand({
     id,
     command,
+    bool isPharmaFlow = false,
   }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -195,9 +210,10 @@ class DevicesRepository {
     assetId,
     sensorId,
     type,
+    bool isPharmaFlow = false,
   }) async {
     try {
-      var token = await loginTokenStorage.getToken();
+      var token = _getToken(isPharmaFlow: isPharmaFlow);
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',

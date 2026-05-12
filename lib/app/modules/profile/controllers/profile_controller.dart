@@ -20,7 +20,7 @@ class ProfileController extends GetxController {
 
   checkLogin() {
     loginTokenStorage = Get.find<LoginTokenStorage>();
-    final token = loginTokenStorage.getToken();
+    final token = loginTokenStorage.getMoreFishToken();
     print(token);
     if (token != null) {
       isLoggedIn.value = token;

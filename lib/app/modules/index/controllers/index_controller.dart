@@ -6,41 +6,34 @@ import '../../../routes/app_pages.dart';
 import '../../../service/local_storage.dart';
 
 class IndexController extends GetxController {
-
   var selectedIndex = 0.obs;
   var isLoggedIn = '';
-  Timer ? timer;
+  Timer? timer;
 
   @override
   void onInit() {
     super.onInit();
     checkLogin();
     internetChecker();
-}
+  }
 
-  checkLogin(){
+  checkLogin() {
     final loginTokenStorage = Get.find<LoginTokenStorage>();
-    if(loginTokenStorage.getToken() != null ){
-      isLoggedIn = loginTokenStorage.getToken()!;
-
+    if (loginTokenStorage.getMoreFishToken() != null) {
+      isLoggedIn = loginTokenStorage.getMoreFishToken()!;
     }
 
     print(isLoggedIn);
   }
 
-  internetChecker() async{
+  internetChecker() async {
     timer?.cancel();
-    timer = Timer(const Duration(seconds: 1), ()async {
-      if(await InternetConnectionChecker.instance.hasConnection){
+    timer = Timer(const Duration(seconds: 1), () async {
+      if (await InternetConnectionChecker.instance.hasConnection) {
         internetChecker();
-      }
-      else{
+      } else {
         Get.toNamed(Routes.INTERNET_CHECKER);
       }
     });
-
   }
-
-  }
-
-
+}

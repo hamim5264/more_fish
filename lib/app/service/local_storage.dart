@@ -65,6 +65,21 @@ class LoginTokenStorage {
     await removePoultryToken();
   }
 
+  Future<void> clearMoreFishSession() async {
+    await removeMoreFishToken();
+    await removeMoreFishUserId();
+  }
+
+  Future<void> clearPharmaSession() async {
+    await removePharmaToken();
+    await removePharmaUserId();
+  }
+
+  Future<void> clearPoultrySession() async {
+    await removePoultryToken();
+    await removePoultryUserId();
+  }
+
   int? getUserId() {
     return getMoreFishUserId();
   }
