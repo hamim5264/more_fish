@@ -37,7 +37,7 @@ class CleanAirNotificationsView
                   time: header.formattedTime.value,
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
-                  logoAssetPath: 'assets/icons/clean_air.png',
+                  logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
                   backgroundColor: const Color(0xffd4fcfd),
                 ),
               ),

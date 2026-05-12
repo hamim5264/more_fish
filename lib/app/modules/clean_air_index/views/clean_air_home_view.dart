@@ -34,8 +34,8 @@ class CleanAirHomeView extends GetView<CleanAirIndexController> {
                   time: header.formattedTime.value,
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
-                  logoAssetPath: 'assets/icons/clean_air.png',
-                  backgroundColor: const Color.fromARGB(255, 139, 231, 139),
+                  logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
+                  backgroundColor: const Color(0xffd4fcfd),
                 ),
               ),
               Expanded(

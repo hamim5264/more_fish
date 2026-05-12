@@ -218,7 +218,7 @@ class CommonAppBar extends StatelessWidget {
                     logoAssetPath ?? "assets/icons/logo_trade_mark.jpg",
                     height: 50,
                     width: 50,
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(width: 8),
