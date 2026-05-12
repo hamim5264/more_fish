@@ -179,6 +179,8 @@ class CommonAppBar extends StatelessWidget {
     required this.cityName,
     this.logoAssetPath,
     this.backgroundColor,
+    this.textColor,
+    this.iconColor,
     this.date,
     this.time,
     this.humidity,
@@ -190,6 +192,8 @@ class CommonAppBar extends StatelessWidget {
   final String cityName;
   final String? logoAssetPath;
   final Color? backgroundColor;
+  final Color? textColor;
+  final Color? iconColor;
   final String? date;
   final String? time;
   final String? temp;
@@ -230,10 +234,11 @@ class CommonAppBar extends StatelessWidget {
                       Text(
                         title,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
 
                           fontWeight: FontWeight.bold,
+                          color: textColor,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -244,16 +249,18 @@ class CommonAppBar extends StatelessWidget {
                             children: [
                               Text(
                                 date ?? "",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
+                                  color: textColor,
                                 ),
                               ),
                               Text(
                                 time ?? "",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
+                                  color: textColor,
                                 ),
                               ),
                             ],
@@ -320,9 +327,9 @@ class CommonAppBar extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.location_on_outlined,
-                        color: Colors.green,
+                        color: iconColor ?? Colors.green,
                         size: 16,
                       ),
                       const SizedBox(width: 2),
@@ -330,6 +337,7 @@ class CommonAppBar extends StatelessWidget {
                         cityName,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
+                        color: textColor,
                       ),
                     ],
                   ),
@@ -338,30 +346,34 @@ class CommonAppBar extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          const CommonText(
+                          CommonText(
                             'Air Temp',
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
+                            color: textColor,
                           ),
                           CommonText(
                             temp ?? '',
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
+                            color: textColor,
                           ),
                         ],
                       ),
                       const SizedBox(width: 8),
                       Column(
                         children: [
-                          const CommonText(
+                          CommonText(
                             'Humidity',
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
+                            color: textColor,
                           ),
                           CommonText(
                             humidity ?? '',
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
+                            color: textColor,
                           ),
                         ],
                       ),

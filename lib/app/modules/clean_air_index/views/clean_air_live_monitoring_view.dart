@@ -85,7 +85,9 @@ class CleanAirLiveMonitoringView
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xff3B73A5),
+                  backgroundColor: const Color(0xff8CB5D6),
+                  textColor: Colors.white,
+                  iconColor: Colors.white,
                 );
               }),
               Expanded(
