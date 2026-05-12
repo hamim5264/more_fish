@@ -38,7 +38,7 @@ class CleanAirNotificationsView
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xffd4fcfd),
+                  backgroundColor: const Color(0xff3B73A5)
                 ),
               ),
               Expanded(

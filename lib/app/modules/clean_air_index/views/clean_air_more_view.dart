@@ -15,7 +15,7 @@ class CleanAirMoreView extends StatelessWidget {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Color(0xffd4fcfd),
+        statusBarColor: const Color(0xff3B73A5),
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
@@ -33,7 +33,7 @@ class CleanAirMoreView extends StatelessWidget {
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xffd4fcfd),
+                  backgroundColor: const Color(0xff3B73A5),
                 ),
               ),
               Expanded(

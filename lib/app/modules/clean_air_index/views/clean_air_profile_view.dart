@@ -37,7 +37,7 @@ class CleanAirProfileView extends GetView<CleanAirProfileController> {
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xffa9e6f5),
+                  backgroundColor: const Color(0xff3B73A5),
                 ),
               ),
               Expanded(
