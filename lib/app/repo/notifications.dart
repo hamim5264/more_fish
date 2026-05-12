@@ -8,21 +8,32 @@ import '../service/failure.dart';
 import '../service/service.dart';
 import 'package:more_fish/app/service/local_storage.dart';
 
-class NotificationsRepository{
-
-
+class NotificationsRepository {
   var loginTokenStorage = Get.find<LoginTokenStorage>();
 
-  Future<Either<Failure, NotificationResponse>> getNotification() async {
+  Future<Either<Failure, NotificationResponse>> getNotification({
+    bool isPharmaFlow = false,
+  }) async {
     try {
-      var token = await loginTokenStorage.getToken();
-      var id = await loginTokenStorage.getUserId();
+      final token = isPharmaFlow
+          ? loginTokenStorage.getPharmaToken()
+          : loginTokenStorage.getToken();
+      final id = isPharmaFlow
+          ? loginTokenStorage.getPharmaUserId()
+          : loginTokenStorage.getUserId();
+
+      if (token == null || id == null) {
+        return Left(Failure('Missing notification session'));
+      }
       var headers = {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       };
 
-      var request = http.Request('GET', Uri.parse("${ApiService.baseUrl}/notification/all/list/$id/"));
+      var request = http.Request(
+        'GET',
+        Uri.parse("${ApiService.baseUrl}/notification/all/list/$id/"),
+      );
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
@@ -30,25 +41,27 @@ class NotificationsRepository{
       if (response.statusCode == 200) {
         print(response.statusCode);
         var data = await response.stream.bytesToString();
-        NotificationResponse notificationResponse = NotificationResponse.fromRawJson(data);
+        NotificationResponse notificationResponse =
+            NotificationResponse.fromRawJson(data);
         return Right(notificationResponse);
       }
       if (response.statusCode == 201) {
         print(response.statusCode);
         var data = await response.stream.bytesToString();
         debugPrint("======================================================1");
-        NotificationResponse notificationResponse = NotificationResponse.fromRawJson(data);
+        NotificationResponse notificationResponse =
+            NotificationResponse.fromRawJson(data);
         debugPrint("======================================================2");
         return Right(notificationResponse);
-      }
-      else {
-        return Left(Failure('Failed to fetch notification with status: ${response.statusCode}'));
+      } else {
+        return Left(
+          Failure(
+            'Failed to fetch notification with status: ${response.statusCode}',
+          ),
+        );
       }
     } catch (e) {
       return Left(Failure('Error: $e'));
     }
-
   }
-
-
 }

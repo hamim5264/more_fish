@@ -75,7 +75,10 @@ class DmaTechnologiesGrid extends StatelessWidget {
       _DmaTileData(
         title: 'Air Care',
         asset: 'assets/icons/clean_air.png',
-        onTap: () => Get.toNamed(Routes.CLEAN_AIR_INDEX),
+        onTap: () => Get.toNamed(
+          Routes.COMING_SOON,
+          arguments: const {'title': 'Air Care'},
+        ),
       ),
       _DmaTileData(
         title: 'Crop Care',
