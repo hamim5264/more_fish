@@ -43,7 +43,10 @@ class IndexView extends GetView<IndexController> {
                       Get.back();
                       controller.selectedIndex.value = 0;
                     },
-                    login: () => Get.toNamed(Routes.LOGIN),
+                    login: () {
+                      Get.back();
+                      Get.toNamed(Routes.LOGIN);
+                    },
                   ),
                 ),
               );

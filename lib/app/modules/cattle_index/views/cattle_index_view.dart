@@ -16,7 +16,7 @@ class CattleIndexView extends GetView<CattleIndexController> {
   @override
   Widget build(BuildContext context) {
     final header = Get.find<CattleHeaderController>();
-    final monitoringController = Get.find<CattleLiveMonitoringController>();
+
 
     const pages = [
       CattleHomeView(),
@@ -63,8 +63,10 @@ class CattleIndexView extends GetView<CattleIndexController> {
                       controller.checkLogin();
                       if (result == true) {
                         controller.selectedIndex.value = index;
-                        // ✅ Refresh monitoring data now that we have a token
-                        monitoringController.refreshLiveData();
+                        // ✅ Refresh monitoring data if it has been instantiated
+                        if (Get.isRegistered<CattleLiveMonitoringController>()) {
+                          Get.find<CattleLiveMonitoringController>().refreshLiveData();
+                        }
                       }
                     },
                   ),

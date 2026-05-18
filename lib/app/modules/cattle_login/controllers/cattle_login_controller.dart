@@ -71,11 +71,15 @@ class CattleLoginController extends GetxController {
             (l) async {
           debugPrint('${l.message}');
           isActiveLoginButton.value = true;
-          Get.snackbar(
-            'Login Failed',
-            'Oops! Invalid login credentials.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          if (context != null && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Oops! Invalid login credentials.'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         },
             (r) async {
           loginResponse.value = r;
@@ -88,11 +92,15 @@ class CattleLoginController extends GetxController {
               'Login response missing token/userId, cannot persist session.',
             );
             isActiveLoginButton.value = true;
-            Get.snackbar(
-              'Login Failed',
-              'Session data not found from server response.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            if (context != null && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Session data not found from server response.'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
             return;
           }
 

@@ -41,7 +41,10 @@ class CleanAirIndexView extends GetView<CleanAirIndexController> {
                       Get.back();
                       controller.selectedIndex.value = 0;
                     },
-                    login: () => Get.toNamed(Routes.PHARMA_LOGIN),
+                    login: () {
+                      Get.back();
+                      Get.toNamed(Routes.PHARMA_LOGIN);
+                    },
                   ),
                 ),
               );

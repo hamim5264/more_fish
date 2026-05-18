@@ -64,11 +64,15 @@ class LoginController extends GetxController {
         (l) async {
           debugPrint('${l.message}');
           isActiveLoginButton.value = true;
-          Get.snackbar(
-            'Login Failed',
-            'Oops! Invalid login credentials.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          if (context != null && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Oops! Invalid login credentials.'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         },
         (r) async {
           loginResponse.value = r;
@@ -81,11 +85,15 @@ class LoginController extends GetxController {
               'Login response missing token/userId, cannot persist session.',
             );
             isActiveLoginButton.value = true;
-            Get.snackbar(
-              'Login Failed',
-              'Session data not found from server response.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            if (context != null && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Session data not found from server response.'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
             return;
           }
 
@@ -104,18 +112,22 @@ class LoginController extends GetxController {
             );
           }
 
+          isActiveLoginButton.value = true;
+          if (context != null && context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Welcome back.'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+
           if (_openedFromGuard) {
             Get.back(result: true);
           } else {
             Get.offAllNamed(Routes.INDEX);
           }
-
-          isActiveLoginButton.value = true;
-          Get.snackbar(
-            'Login Successful',
-            'Welcome back.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
         },
       );
     } finally {

@@ -4,6 +4,7 @@ import '../../../common_widgets/common_alert_dialog.dart';
 import '../../../common_widgets/common_container.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/cattle_index_controller.dart';
+import '../controllers/cattle_live_monitoring_controller.dart';
 import 'cattle_live_monitoring_view.dart';
 
 class CattleHomeView extends GetView<CattleIndexController> {

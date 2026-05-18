@@ -85,7 +85,10 @@ class HomeView extends GetView<HomeController> {
                                       onWillPop: () async => false,
                                       child: CommonAlertDialog(
                                         notNow: () => Get.back(),
-                                        login: () => Get.toNamed(Routes.LOGIN),
+                                        login: () {
+                                          Get.back();
+                                          Get.toNamed(Routes.LOGIN);
+                                        },
                                       ),
                                     ),
                                   );
@@ -123,7 +126,7 @@ class HomeView extends GetView<HomeController> {
                           );
                         },
                       ),
-                      const SizedBox(height: 14),
+/*                      const SizedBox(height: 14),
                       GridView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         shrinkWrap: true,
@@ -170,7 +173,7 @@ class HomeView extends GetView<HomeController> {
                           );
                         },
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 14),*/
                     ],
                   ),
                 ),

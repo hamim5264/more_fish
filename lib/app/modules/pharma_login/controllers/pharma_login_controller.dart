@@ -60,11 +60,15 @@ class PharmaLoginController extends GetxController {
         (failure) async {
           debugPrint(failure.message);
           isActiveLoginButton.value = true;
-          Get.snackbar(
-            'Login Failed',
-            'Oops! Invalid login credentials.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          if (Get.context != null && Get.context!.mounted) {
+            ScaffoldMessenger.of(Get.context!).showSnackBar(
+              const SnackBar(
+                content: Text('Oops! Invalid login credentials.'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         },
         (loginResponse) async {
           final token = loginResponse.data?.token;
@@ -75,11 +79,15 @@ class PharmaLoginController extends GetxController {
               'Pharma login response missing token/userId, cannot persist session.',
             );
             isActiveLoginButton.value = true;
-            Get.snackbar(
-              'Login Failed',
-              'Session data not found from server response.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            if (Get.context != null && Get.context!.mounted) {
+              ScaffoldMessenger.of(Get.context!).showSnackBar(
+                const SnackBar(
+                  content: Text('Session data not found from server response.'),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
             return;
           }
 
@@ -101,11 +109,15 @@ class PharmaLoginController extends GetxController {
           }
 
           isActiveLoginButton.value = true;
-          Get.snackbar(
-            'Login Successful',
-            'Welcome back.',
-            snackPosition: SnackPosition.BOTTOM,
-          );
+          if (Get.context != null && Get.context!.mounted) {
+            ScaffoldMessenger.of(Get.context!).showSnackBar(
+              const SnackBar(
+                content: Text('Welcome back.'),
+                backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
         },
       );
     } finally {

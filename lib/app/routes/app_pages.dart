@@ -15,8 +15,6 @@ import '../modules/cattle_index/views/cattle_index_view.dart';
 import '../modules/cattle_live_data/bindings/cattle_live_data_binding.dart';
 import '../modules/cattle_live_data/views/cattle_live_data_view.dart';
 import '../modules/cattle_login/bindings/cattle_login_binding.dart';
-import '../modules/cattle_login/bindings/cattle_login_binding.dart';
-import '../modules/cattle_login/views/cattle_login_view.dart';
 import '../modules/cattle_login/views/cattle_login_view.dart';
 import '../modules/clean_air_index/bindings/clean_air_index_binding.dart';
 import '../modules/clean_air_index/bindings/clean_air_live_monitoring_binding.dart';

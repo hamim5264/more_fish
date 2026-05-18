@@ -433,6 +433,7 @@ class CleanAirLiveMonitoringView
                                                           '${ApiService.baseUrl}/${controller.pondDataResponse.value?.data.devices[0].sensors[index].sensorIcon}',
                                                           height: 40,
                                                           width: 40,
+                                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.sensors, size: 40, color: Colors.grey),
                                                         ),
                                                       ),
                                                       Expanded(
