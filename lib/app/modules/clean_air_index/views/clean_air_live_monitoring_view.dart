@@ -76,8 +76,8 @@ class CleanAirLiveMonitoringView
           child: Column(
             children: [
               const SizedBox(height: 40),
-              Obx(
-                () => CommonAppBar(
+              Obx(() {
+                return CommonAppBar(
                   title: 'Pharma Care',
                   cityName: 'Dhaka',
                   date: header.formattedDate.value,
@@ -85,11 +85,11 @@ class CleanAirLiveMonitoringView
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xff4F84B5),
+                  backgroundColor: const Color(0xff8CB5D6),
                   textColor: Colors.white,
                   iconColor: Colors.white,
-                ),
-              ),
+                );
+              }),
               Expanded(
                 child: Obx(() {
                   final data = controller.pondDataResponse.value;

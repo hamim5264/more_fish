@@ -23,7 +23,7 @@ class CleanAirHomeView extends GetView<CleanAirIndexController> {
       ),
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 220, 240, 255),
+          backgroundColor: const Color.fromARGB(255, 222, 255, 230),
           body: Column(
             children: [
               Obx(

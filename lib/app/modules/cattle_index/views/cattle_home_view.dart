@@ -1,10 +1,9 @@
-// app/modules/cattle_index/views/cattle_home_view.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../../common_widgets/common_app_bar.dart';
+import '../../../common_widgets/common_alert_dialog.dart';
+import '../../../common_widgets/common_container.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/cattle_index_controller.dart';
-import '../controllers/cattle_header_controller.dart';
 import 'cattle_live_monitoring_view.dart';
 
 class CattleHomeView extends GetView<CattleIndexController> {
@@ -12,94 +11,76 @@ class CattleHomeView extends GetView<CattleIndexController> {
 
   @override
   Widget build(BuildContext context) {
-    final header = Get.find<CattleHeaderController>();
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Color.fromARGB(255, 255, 255, 255),
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
+    return GridView.builder(
+      padding: const EdgeInsets.all(12.0),
+      itemCount: controller.listItemsEnglish1.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12.0,
+        mainAxisSpacing: 12.0,
+        childAspectRatio: 1,
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: const Color.fromARGB(255, 236, 241, 243),
-          body: Column(
-            children: [
-              Obx(
-                () => CommonAppBar(
-                  title: 'Cattle Care',
-                  cityName: 'Dhaka',
-                  date: header.formattedDate.value,
-                  time: header.formattedTime.value,
-                  temp: header.tempText.value,
-                  humidity: header.humidityText.value,
-                  logoAssetPath: 'assets/icons/dma_cattle_care.png',
-                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: _HomeFeatureTile(
-                      title: 'Live Data Monitoring',
-                      iconAssetPath: 'assets/icons/water_quality_check.png',
-                      onTap: () {
-                        Get.to(() => const CattleLiveMonitoringView());
-                      },
-                    ),
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: () async {
+            controller.checkLogin();
+            if (controller.isLoggedIn.value.isEmpty) {
+              showDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: CommonAlertDialog(
+                    notNow: () => Get.back(),
+                    login: () async {
+                      Get.back(); // Close dialog
+                      final result = await Get.toNamed(
+                        Routes.CATTLE_LOGIN,
+                        arguments: {'fromGuard': true},
+                      );
+                      // ✅ Refresh login state in the controller
+                      controller.checkLogin();
+                      if (result == true) {
+                        if (index == 0) {
+                          Get.to(() => const CattleLiveMonitoringView());
+                        } else {
+                          Get.toNamed(Routes.COMING_SOON);
+                        }
+                      }
+                    },
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _HomeFeatureTile extends StatelessWidget {
-  const _HomeFeatureTile({
-    required this.title,
-    required this.iconAssetPath,
-    required this.onTap,
-  });
-
-  final String title;
-  final String iconAssetPath;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: const Color.fromARGB(255, 255, 255, 255),
-      elevation: 2,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: SizedBox(
-          width: 170,
-          height: 170,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(iconAssetPath, height: 70, fit: BoxFit.contain),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+              );
+            } else {
+              if (index == 0) {
+                Get.to(() => const CattleLiveMonitoringView());
+              } else {
+                Get.toNamed(Routes.COMING_SOON);
+              }
+            }
+          },
+          child: CommonContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(controller.iconList1[index], height: 70, width: 70),
+                const SizedBox(height: 6),
+                Text(
+                  controller.listItemsEnglish1[index].tr,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -8,12 +8,24 @@ import '../modules/about_devices/bindings/about_devices_binding.dart';
 import '../modules/about_devices/views/about_devices_view.dart';
 import '../modules/about_devices_details/bindings/about_devices_details_binding.dart';
 import '../modules/about_devices_details/views/about_devices_details_view.dart';
+import '../modules/aerator_connection/bindings/aerator_connection_binding.dart';
+import '../modules/aerator_connection/views/aerator_connection_view.dart';
+import '../modules/cattle_index/bindings/cattle_index_binding.dart';
+import '../modules/cattle_index/views/cattle_index_view.dart';
+import '../modules/cattle_live_data/bindings/cattle_live_data_binding.dart';
+import '../modules/cattle_live_data/views/cattle_live_data_view.dart';
+import '../modules/cattle_login/bindings/cattle_login_binding.dart';
+import '../modules/cattle_login/bindings/cattle_login_binding.dart';
+import '../modules/cattle_login/views/cattle_login_view.dart';
+import '../modules/cattle_login/views/cattle_login_view.dart';
+import '../modules/clean_air_index/bindings/clean_air_index_binding.dart';
+import '../modules/clean_air_index/bindings/clean_air_live_monitoring_binding.dart';
+import '../modules/clean_air_index/views/clean_air_index_view.dart';
+import '../modules/clean_air_index/views/clean_air_live_monitoring_view.dart';
 import '../modules/coming_soon/bindings/coming_soon_binding.dart';
 import '../modules/coming_soon/views/coming_soon_view.dart';
 import '../modules/dma_technologies/bindings/dma_technologies_binding.dart';
 import '../modules/dma_technologies/views/dma_technologies_shell_view.dart';
-import '../modules/aerator_connection/bindings/aerator_connection_binding.dart';
-import '../modules/aerator_connection/views/aerator_connection_view.dart';
 import '../modules/faq/bindings/faq_binding.dart';
 import '../modules/faq/views/faq_view.dart';
 import '../modules/faq_details/bindings/faq_details_binding.dart';
@@ -22,20 +34,20 @@ import '../modules/farm_management/bindings/farm_management_binding.dart';
 import '../modules/farm_management/views/farm_management_view.dart';
 import '../modules/farm_management_details/bindings/farm_management_details_binding.dart';
 import '../modules/farm_management_details/views/farm_management_details_view.dart';
+import '../modules/fcr_calculator/bindings/fcr_calculator_binding.dart';
+import '../modules/fcr_calculator/views/fcr_calculator_view.dart';
 import '../modules/feed_management/bindings/feed_management_binding.dart';
 import '../modules/feed_management/views/feed_management_view.dart';
 import '../modules/feed_management_details/bindings/feed_management_details_binding.dart';
 import '../modules/feed_management_details/views/feed_management_details_view.dart';
 import '../modules/feeder_connection/bindings/feeder_connection_binding.dart';
 import '../modules/feeder_connection/views/feeder_connection_view.dart';
-import '../modules/fish_disease_treatment/bindings/fish_disease_treatment_binding.dart';
-import '../modules/fish_disease_treatment/views/fish_disease_treatment_view.dart';
 import '../modules/fish_disease_detector/bindings/fish_disease_detector_binding.dart';
 import '../modules/fish_disease_detector/views/fish_disease_detector_view.dart';
+import '../modules/fish_disease_treatment/bindings/fish_disease_treatment_binding.dart';
+import '../modules/fish_disease_treatment/views/fish_disease_treatment_view.dart';
 import '../modules/fish_disease_treatment_details/bindings/fish_disease_treatment_details_binding.dart';
 import '../modules/fish_disease_treatment_details/views/fish_disease_treatment_details_view.dart';
-import '../modules/fcr_calculator/bindings/fcr_calculator_binding.dart';
-import '../modules/fcr_calculator/views/fcr_calculator_view.dart';
 import '../modules/forgot_password/bindings/forgot_password_binding.dart';
 import '../modules/forgot_password/views/forgot_password_view.dart';
 import '../modules/graph/bindings/graph_binding.dart';
@@ -46,22 +58,10 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/index/bindings/index_binding.dart';
 import '../modules/index/views/index_view.dart';
-import '../modules/poultry_index/bindings/poultry_index_binding.dart';
-import '../modules/poultry_index/views/poultry_index_view.dart';
-import '../modules/cattle_index/bindings/cattle_index_binding.dart';
-import '../modules/cattle_index/views/cattle_index_view.dart';
-import '../modules/clean_air_index/bindings/clean_air_index_binding.dart';
-import '../modules/clean_air_index/bindings/clean_air_live_monitoring_binding.dart';
-import '../modules/clean_air_index/views/clean_air_index_view.dart';
-import '../modules/clean_air_index/views/clean_air_live_monitoring_view.dart';
 import '../modules/internet_checker/bindings/internet_checker_binding.dart';
 import '../modules/internet_checker/views/internet_checker_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
-import '../modules/pharma_login/bindings/pharma_login_binding.dart';
-import '../modules/pharma_login/views/pharma_login_view.dart';
-import '../modules/poultry_login/bindings/poultry_login_binding.dart';
-import '../modules/poultry_login/views/poultry_login_view.dart';
 import '../modules/more/bindings/more_binding.dart';
 import '../modules/more/views/more_view.dart';
 import '../modules/notifications/bindings/notifications_binding.dart';
@@ -70,12 +70,18 @@ import '../modules/otp_verify/bindings/otp_verify_binding.dart';
 import '../modules/otp_verify/views/otp_verify_view.dart';
 import '../modules/password_change/bindings/password_change_binding.dart';
 import '../modules/password_change/views/password_change_view.dart';
+import '../modules/pharma_login/bindings/pharma_login_binding.dart';
+import '../modules/pharma_login/views/pharma_login_view.dart';
 import '../modules/pond_management/bindings/pond_management_binding.dart';
 import '../modules/pond_management/views/pond_management_view.dart';
 import '../modules/pond_management_details/bindings/pond_management_details_binding.dart';
 import '../modules/pond_management_details/views/pond_management_details_view.dart';
 import '../modules/pond_management_table/bindings/pond_management_table_binding.dart';
 import '../modules/pond_management_table/views/pond_management_table_view.dart';
+import '../modules/poultry_index/bindings/poultry_index_binding.dart';
+import '../modules/poultry_index/views/poultry_index_view.dart';
+import '../modules/poultry_login/bindings/poultry_login_binding.dart';
+import '../modules/poultry_login/views/poultry_login_view.dart';
 import '../modules/product_comp_wise_list/bindings/product_comp_wise_list_binding.dart';
 import '../modules/product_comp_wise_list/views/product_comp_wise_list_view.dart';
 import '../modules/product_companies/bindings/product_companies_binding.dart';
@@ -358,6 +364,16 @@ class AppPages {
       name: _Paths.FCR_CALCULATOR,
       page: () => const FcrCalculatorView(),
       binding: FcrCalculatorBinding(),
+    ),
+    GetPage(
+      name: _Paths.CATTLE_LOGIN,
+      page: () => const CattleLoginView(),
+      binding: CattleLoginBinding(),
+    ),
+    GetPage(
+      name: _Paths.CATTLE_LIVE_DATA,
+      page: () => const CattleLiveDataView(),
+      binding: CattleLiveDataBinding(),
     ),
   ];
 }

@@ -56,7 +56,7 @@ class DmaTechnologiesGrid extends StatelessWidget {
         onTap: () => Get.toNamed(Routes.CLEAN_AIR_INDEX),
       ),
       _DmaTileData(
-        title: 'Food & Beverage Care',
+        title: 'Food & Beverage',
         asset: 'assets/icons/dma_food_beverage.png',
         onTap: () => Get.toNamed(
           Routes.COMING_SOON,

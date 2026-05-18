@@ -134,14 +134,19 @@ class AuthRepository {
 
   Future<Either<Failure, ProfileResponse>> getProfile({
     bool isPharmaFlow = false,
+    bool isCattleFlow = false,
   }) async {
     try {
       var token = isPharmaFlow
           ? loginTokenStorage.getPharmaToken()
-          : loginTokenStorage.getMoreFishToken();
+          : isCattleFlow
+              ? loginTokenStorage.getCattleToken()
+              : loginTokenStorage.getMoreFishToken();
       var id = isPharmaFlow
           ? loginTokenStorage.getPharmaUserId()
-          : loginTokenStorage.getMoreFishUserId();
+          : isCattleFlow
+              ? loginTokenStorage.getCattleUserId()
+              : loginTokenStorage.getMoreFishUserId();
 
       var headers = {
         'Authorization': 'Bearer $token',
@@ -296,16 +301,21 @@ class AuthRepository {
     required String fcmToken,
     bool isPoultryFlow = false,
     bool isPharmaFlow = false,
+    bool isCattleFlow = false,
   }) async {
     try {
       final baseUrl = isPoultryFlow
           ? ApiService.poultryBaseUrl
+          : isCattleFlow
+          ? ApiService.moreFishBaseUrl
           : ApiService.moreFishBaseUrl;
 
       final token = isPoultryFlow
           ? loginTokenStorage.getPoultryToken()
           : isPharmaFlow
           ? loginTokenStorage.getPharmaToken()
+          : isCattleFlow
+          ? loginTokenStorage.getCattleToken()
           : loginTokenStorage.getMoreFishToken();
 
       var headers = {

@@ -20,7 +20,7 @@ class CleanAirNotificationsView
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: const Color.fromARGB(255, 220, 240, 255),
+        statusBarColor: Color(0xffd4fcfd),
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
@@ -38,9 +38,7 @@ class CleanAirNotificationsView
                   temp: header.tempText.value,
                   humidity: header.humidityText.value,
                   logoAssetPath: 'assets/icons/dma_pharmaceutical.png',
-                  backgroundColor: const Color(0xff4F84B5),
-                  textColor: Colors.white,
-                  iconColor: Colors.white,
+                  backgroundColor: const Color(0xff3B73A5)
                 ),
               ),
               Expanded(

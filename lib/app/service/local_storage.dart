@@ -7,9 +7,12 @@ class LoginTokenStorage {
   static const _moreFishTokenKey = 'token';
   static const _pharmaTokenKey = 'pharmaToken';
   static const _poultryTokenKey = 'poultryToken';
+  static const _cattleTokenKey = 'cattleToken';
+  
   static const _moreFishUserIdKey = 'userId';
   static const _pharmaUserIdKey = 'pharmaUserId';
   static const _poultryUserIdKey = 'poultryUserId';
+  static const _cattleUserIdKey = 'cattleUserId';
 
   String? getToken() {
     return getMoreFishToken();
@@ -59,10 +62,24 @@ class LoginTokenStorage {
     await sharedPreferences.remove(_poultryTokenKey);
   }
 
+  // --- Cattle Care Storage ---
+  String? getCattleToken() {
+    return _normalizedToken(sharedPreferences.getString(_cattleTokenKey));
+  }
+
+  Future<void> setCattleToken(String value) async {
+    await sharedPreferences.setString(_cattleTokenKey, value.trim());
+  }
+
+  Future<void> removeCattleToken() async {
+    await sharedPreferences.remove(_cattleTokenKey);
+  }
+
   Future<void> removeAllTokens() async {
     await removeMoreFishToken();
     await removePharmaToken();
     await removePoultryToken();
+    await removeCattleToken();
   }
 
   Future<void> clearMoreFishSession() async {
@@ -78,6 +95,11 @@ class LoginTokenStorage {
   Future<void> clearPoultrySession() async {
     await removePoultryToken();
     await removePoultryUserId();
+  }
+
+  Future<void> clearCattleSession() async {
+    await removeCattleToken();
+    await removeCattleUserId();
   }
 
   int? getUserId() {
@@ -128,6 +150,19 @@ class LoginTokenStorage {
     await sharedPreferences.remove(_poultryUserIdKey);
   }
 
+  // --- Cattle Care User ID ---
+  int? getCattleUserId() {
+    return sharedPreferences.getInt(_cattleUserIdKey);
+  }
+
+  Future<void> setCattleUserId(int value) async {
+    await sharedPreferences.setInt(_cattleUserIdKey, value);
+  }
+
+  Future<void> removeCattleUserId() async {
+    await sharedPreferences.remove(_cattleUserIdKey);
+  }
+
   bool hasValidToken() {
     return hasValidMoreFishToken();
   }
@@ -152,6 +187,15 @@ class LoginTokenStorage {
 
   bool hasValidPoultryToken() {
     final token = getPoultryToken();
+    if (token == null) return false;
+    final normalized = token.trim().toLowerCase();
+    return normalized.isNotEmpty &&
+        normalized != 'null' &&
+        normalized != 'undefined';
+  }
+
+  bool hasValidCattleToken() {
+    final token = getCattleToken();
     if (token == null) return false;
     final normalized = token.trim().toLowerCase();
     return normalized.isNotEmpty &&

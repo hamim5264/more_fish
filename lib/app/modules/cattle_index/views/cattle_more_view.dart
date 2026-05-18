@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../common_widgets/common_app_bar.dart';
 import '../../../routes/app_pages.dart';
-import '../controllers/cattle_header_controller.dart';
 import '../controllers/cattle_index_controller.dart';
 
 class CattleMoreView extends GetView<CattleIndexController> {
@@ -12,52 +9,81 @@ class CattleMoreView extends GetView<CattleIndexController> {
 
   @override
   Widget build(BuildContext context) {
-    final header = Get.find<CattleHeaderController>();
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Color(0xffdbcc68),
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.dark,
+    return Scaffold(
+      backgroundColor: const Color(0xffebffff),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        children: [
+          _SimpleMoreTile(title: 'FAQ', onTap: () => Get.toNamed(Routes.FAQ)),
+          const SizedBox(height: 10),
+          _SimpleMoreTile(
+            title: 'About App',
+            onTap: () => Get.toNamed(Routes.ABOUT_APP),
+          ),
+          const SizedBox(height: 10),
+          _SimpleMoreTile(
+            title: 'About Device',
+            onTap: () => Get.toNamed(Routes.ABOUT_DEVICES),
+          ),
+          const SizedBox(height: 10),
+          _LanguageTile(),
+        ],
       ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: const Color(0xffebffff),
-          body: Column(
-            children: [
-              Obx(() => CommonAppBar(
-                    title: 'Cattle Care',
-                    cityName: 'Dhaka',
-                    date: header.formattedDate.value,
-                    time: header.formattedTime.value,
-                    temp: header.tempText.value,
-                    humidity: header.humidityText.value,
-                    logoAssetPath: 'assets/icons/dma_cattle_care.png',
-                    backgroundColor: const Color(0xffdbcc68),
-                  )),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  children: [
-                    _SimpleMoreTile(
-                      title: 'FAQ',
-                      onTap: () => Get.toNamed(Routes.FAQ),
-                    ),
-                    const SizedBox(height: 10),
-                    _SimpleMoreTile(
-                      title: 'About App',
-                      onTap: () => Get.toNamed(Routes.ABOUT_APP),
-                    ),
-                    const SizedBox(height: 10),
-                    _SimpleMoreTile(
-                      title: 'About Device',
-                      onTap: () => Get.toNamed(Routes.ABOUT_DEVICES),
-                    ),
-                  ],
+    );
+  }
+}
+
+class _LanguageTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 1,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          children: [
+            const Expanded(
+              child: Text(
+                'Language',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+            ),
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'bn') {
+                  Get.updateLocale(const Locale('bn', 'BD'));
+                } else {
+                  Get.updateLocale(const Locale('en', 'US'));
+                }
+              },
+              itemBuilder: (context) => const [
+                PopupMenuItem<String>(value: 'en', child: Text('English')),
+                PopupMenuItem<String>(value: 'bn', child: Text('বাংলা')),
+              ],
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xff8beeef),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  (Get.locale?.languageCode ?? 'en') == 'bn'
+                      ? 'বাংলা'
+                      : 'English',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -65,10 +91,7 @@ class CattleMoreView extends GetView<CattleIndexController> {
 }
 
 class _SimpleMoreTile extends StatelessWidget {
-  const _SimpleMoreTile({
-    required this.title,
-    required this.onTap,
-  });
+  const _SimpleMoreTile({required this.title, required this.onTap});
 
   final String title;
   final VoidCallback onTap;

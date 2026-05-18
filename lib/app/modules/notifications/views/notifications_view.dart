@@ -201,12 +201,12 @@ class NotificationsView extends GetView<NotificationsController> {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
                     child: Image.asset(
                       "assets/icons/lang_translate.png",
                       height: 30,
                       width: 30,
                     ),
-                    borderRadius: BorderRadius.circular(100),
                   ),
                 ),
               ],

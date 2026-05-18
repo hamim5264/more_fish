@@ -1,50 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'common_text.dart';
-
 
 class CommonAlertDialog extends StatelessWidget {
-  final VoidCallback notNow;
-  final VoidCallback login;
-
   const CommonAlertDialog({
     super.key,
     required this.notNow,
     required this.login,
   });
 
+  final VoidCallback notNow;
+  final VoidCallback login;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: CommonText(
-        'login'.tr,
-        color: Colors.green.shade700,
-        fontWeight: FontWeight.bold,
-        fontSize: 24,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
       ),
-      content: CommonText(
-        'please_login'.tr,
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        color: Colors.blueGrey,
+      title: const Text(
+        "Login",
+        style: TextStyle(
+          color: Colors.green,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      content: const Text(
+        "Please, Login before continue.",
+        style: TextStyle(
+          color: Colors.blueGrey,
+          fontSize: 16,
+        ),
       ),
       actions: [
         TextButton(
           onPressed: notNow,
-          child: Text(
-            'not_now'.tr,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          child: const Text(
+            "Not Now",
+            style: TextStyle(
+              color: Colors.deepPurple,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         TextButton(
           onPressed: login,
-          child: Text(
-            'login'.tr,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          child: const Text(
+            "Login",
+            style: TextStyle(
+              color: Colors.deepPurple,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       ],
     );
   }
 }
-

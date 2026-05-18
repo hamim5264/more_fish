@@ -36,8 +36,6 @@ class NotificationsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Intentionally empty; login check is triggered in onReady so
-    // it runs after dependencies are available.
   }
 
   @override
@@ -75,12 +73,10 @@ class NotificationsController extends GetxController {
     if (_hasShownLoginPrompt.value) return;
     _hasShownLoginPrompt.value = true;
 
-    // Show the same login prompt dialog used elsewhere in the app.
     Get.dialog(
       CommonAlertDialog(
         notNow: () {
           Get.back();
-          // If user opens Notifications via a direct route, send them to Home.
           Get.offAllNamed(Routes.INDEX);
         },
         login: () {
