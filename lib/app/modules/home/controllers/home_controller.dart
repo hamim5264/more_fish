@@ -53,6 +53,8 @@ class HomeController extends GetxController {
     "auto_aerator_connection",
     "auto_feeder_connection",
     "weather_forecast",
+    "smart_khamari",
+    "emergency_service",
   ].obs;
 
   var iconList2 = [
@@ -62,6 +64,8 @@ class HomeController extends GetxController {
     "assets/icons/auto_aerator.png",
     "assets/icons/auto-feeder.png",
     "assets/icons/weather_forecast.png",
+    "assets/icons/community.png",
+    "assets/icons/24_hours_support.png",
   ].obs;
 
   var listItemsBangla1 = [
