@@ -981,6 +981,27 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
         width: 40,
         fit: BoxFit.contain,
       );
+    } else if (name == 'nh3') {
+      return Image.asset(
+        'assets/icons/nh3.jpeg',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
+    } else if (name == 'tds') {
+      return Image.asset(
+        'assets/icons/tds.jpeg',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
+    } else if (name == 'salinity') {
+      return Image.asset(
+        'assets/icons/salinity.jpeg',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
     } else {
       return Image.network(
         "${ApiService.baseUrl}/$sensorIconFromApi",
