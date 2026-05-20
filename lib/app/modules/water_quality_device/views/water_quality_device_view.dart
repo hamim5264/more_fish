@@ -958,6 +958,44 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
     return displayValue.toStringAsFixed(2);
   }
 
+  Widget _getSensorIconWidget(String? sensorName, String? sensorIconFromApi) {
+    final name = (sensorName ?? '').trim().toLowerCase();
+    if (name == 'do') {
+      return Image.asset(
+        'assets/icons/water_quality_check.png',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
+    } else if (name == 'ph') {
+      return Image.asset(
+        'assets/icons/ph.png',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
+    } else if (name == 'temperature' || name.contains('temp')) {
+      return Image.asset(
+        'assets/icons/poultry_temperature.png',
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return Image.network(
+        "${ApiService.baseUrl}/$sensorIconFromApi",
+        height: 40,
+        width: 40,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) => const Icon(
+          Icons.sensors,
+          size: 40,
+          color: Colors.grey,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     HomeController homeController = Get.put(HomeController());
@@ -1357,11 +1395,9 @@ class WaterQualityDeviceView extends GetView<WaterQualityDeviceController> {
                                                   child: Column(
                                                     children: [
                                                       Expanded(
-                                                        child: Image.network(
-                                                          "${ApiService.baseUrl}/${controller.pondDataResponse.value?.data.devices[0].sensors[index].sensorIcon}",
-                                                          height: 40,
-                                                          width: 40,
-                                                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.sensors, size: 40, color: Colors.grey),
+                                                        child: _getSensorIconWidget(
+                                                          sensorData?.sensorName,
+                                                          sensorData?.sensorIcon,
                                                         ),
                                                       ),
                                                       Expanded(
